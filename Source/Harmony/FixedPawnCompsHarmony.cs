@@ -21,7 +21,7 @@ namespace FixedPawnGenerate
             {
                 __result = __result || thing.HasComp<CompProjectileInterceptor>();
             }
-        
+            
         }
     }
 

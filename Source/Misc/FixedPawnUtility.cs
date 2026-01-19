@@ -23,9 +23,6 @@ namespace FixedPawnGenerate
         public static ModSetting_FixedPawnGenerate Settings => LoadedModManager.GetMod<Mod_FixedPawnGenerate>().GetSettings<ModSetting_FixedPawnGenerate>();
 
         //private
-        private static bool IsAlienRaceActive => ModLister.HasActiveModWithName("Humanoid Alien Races 2.0") ||
-                                                    ModLister.HasActiveModWithName("Humanoid Alien Races") ||
-                                                    ModLister.HasActiveModWithName("Humanoid Alien Races ~ Dev");
         static FixedPawnUtility()
         {
             //add Black List
@@ -214,13 +211,13 @@ namespace FixedPawnGenerate
                 pawn.story.SkinColorBase = def.skinColor;
 
                 //alien race compatible
-                if (!IsAlienRaceActive)
+                if (!Compact_HAR.IsActive)
                 {
                     pawn.story.skinColorOverride = def.skinColor;
                 }
                 else
                 {
-                    AlienraceUtility.SetPawnSkinColor(pawn, def.skinColor);
+                    Compact_HAR.SetPawnSkinColor(pawn, def.skinColor);
                 }
             }
 
@@ -264,6 +261,23 @@ namespace FixedPawnGenerate
                 ReplaceInnercontainer(pawn.inventory.GetDirectlyHeldThings(), def.inventory);
 
                 ReplaceInnercontainer(pawn.apparel.GetDirectlyHeldThings(), def.apparel);
+
+                //CE gun ammo
+                if (Compact_CombatExtended.IsActive)
+                {
+                    List<Thing> things = new List<Thing>();
+                    things.AddRange(pawn.equipment.GetDirectlyHeldThings());
+                    things.AddRange(pawn.inventory.GetDirectlyHeldThings());
+
+                    foreach (var thing in things.Where(x => x.def.IsRangedWeapon))
+                    {
+                        Thing ammo = Compact_CombatExtended.GenerateGunAmmo(thing);
+                        if (ammo != null)
+                        {
+                            pawn.inventory.innerContainer.TryAdd(ammo, ammo.stackCount);
+                        }
+                    }
+                }
 
                 //story
                 SetPawnStory(pawn, def);
@@ -363,7 +377,7 @@ namespace FixedPawnGenerate
                 }
 
                 //alienrace addons
-                if (IsAlienRaceActive && !def.alienraceAddonProps.NullOrEmpty())
+                if (Compact_HAR.IsActive && !def.alienraceAddonProps.NullOrEmpty())
                 {
                     foreach (var addon in def.alienraceAddonProps)
                     {

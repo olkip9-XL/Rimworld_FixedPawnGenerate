@@ -21,11 +21,11 @@ namespace FixedPawnGenerate
         public Color? colorTwo;
         public void ApplyToPawn(Pawn pawn)
         {
-            AlienraceUtility.SetPawnAddon(pawn, addonName, variantIndex);
+            Compact_HAR.SetPawnAddon(pawn, addonName, variantIndex);
 
             if (color.HasValue || colorTwo.HasValue)
             {
-                AlienraceUtility.SetAlienAddonColor(pawn, addonName, color, colorTwo);
+                Compact_HAR.SetAlienAddonColor(pawn, addonName, color, colorTwo);
             }
         }
 

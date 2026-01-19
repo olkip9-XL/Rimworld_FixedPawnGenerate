@@ -9,8 +9,14 @@ using Verse;
 
 namespace FixedPawnGenerate
 {
-    public static class AlienraceUtility
+    public static class Compact_HAR
     {
+
+
+        public static bool IsActive => ModLister.HasActiveModWithName("Humanoid Alien Races 2.0") ||
+                                                  ModLister.HasActiveModWithName("Humanoid Alien Races") ||
+                                                  ModLister.HasActiveModWithName("Humanoid Alien Races ~ Dev");
+
         //color channel: base, hair, skin, skinBase, tattoo, favorite, ideo, mech
         public static Action<Pawn, string, Color?, Color?> SetAlienChannelColorFunc = null;
 

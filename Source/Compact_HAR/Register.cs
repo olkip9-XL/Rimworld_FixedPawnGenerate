@@ -7,21 +7,18 @@ using System.Threading.Tasks;
 using Verse;
 using UnityEngine;
 using AlienRace;
-using System.Security.Cryptography;
 
-namespace FixedPawnGenerate.Compact_HAR
+namespace FixedPawnGenerate.Compact.HAR
 {
     [StaticConstructorOnStartup]
-    internal static class HAR_Register
+    internal static class Register
     {
-        public static bool IsHARActive => ModLister.HasActiveModWithName("Humanoid Alien Races 2.0") ||
-                                                   ModLister.HasActiveModWithName("Humanoid Alien Races") ||
-                                                   ModLister.HasActiveModWithName("Humanoid Alien Races ~ Dev");
+        public static bool IsHARActive => Compact_HAR.IsActive;
 
         public static Dictionary<ThingDef_AlienRace, List<AlienPartGenerator.BodyAddon>> bodyAddonDict = new Dictionary<ThingDef_AlienRace, List<AlienPartGenerator.BodyAddon>>();
 
 
-        static HAR_Register()
+        static Register()
         {
             if (IsHARActive)
             {
@@ -33,9 +30,9 @@ namespace FixedPawnGenerate.Compact_HAR
 
         static void RegisteMethod()
         {
-            AlienraceUtility.SetAlienChannelColorFunc = SetColorChanel;
-            AlienraceUtility.SetPawnAddonFunc = SetBodyAddonVariant;
-            AlienraceUtility.SetAlienAddonColorFunc = SetBodyAddonColor;
+            Compact_HAR.SetAlienChannelColorFunc = SetColorChanel;
+            Compact_HAR.SetPawnAddonFunc = SetBodyAddonVariant;
+            Compact_HAR.SetAlienAddonColorFunc = SetBodyAddonColor;
         }
 
         static void Initialize()

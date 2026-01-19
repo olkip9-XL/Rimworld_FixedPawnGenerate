@@ -18,6 +18,10 @@ namespace FixedPawnGenerate
         {
             get => curTag;
             set {
+                if(curTag == value)
+                {
+                    return;
+                }
 
                 //effecter
                 DebugActionsUtility.DustPuffFrom(pawn);

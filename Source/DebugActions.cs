@@ -95,5 +95,31 @@ namespace FixedPawnGenerate
             return pawnTex;
         }
 
+        // Export local texture, for debug use
+        //[DebugAction("FixedPawnGenerate", "FPG: Export Local texture", false, false, false, false, false, 0, false, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static void ExportTexture()
+        {
+            string path = $"Things/Mote";
+
+            foreach (var tex in ContentFinder<Texture2D>.GetAllInFolder(path))
+            {
+                RenderTexture rt = RenderTexture.GetTemporary(512, 512, 0, RenderTextureFormat.ARGB32);
+
+                RenderTexture.active = rt;
+                Graphics.Blit(tex, rt);
+
+                Texture2D tempTex = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
+                tempTex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+                tempTex.Apply();
+                RenderTexture.active = null;
+
+                //create dir
+                string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "RimworldTexture");
+                System.IO.Directory.CreateDirectory(folderPath);
+                byte[] bytes = tempTex.EncodeToPNG();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folderPath, $"{tex.name}.png"), bytes);
+            }
+        }
+
     }
 }
