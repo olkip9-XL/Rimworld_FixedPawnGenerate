@@ -112,7 +112,7 @@ namespace FixedPawnGenerate
             }
         }
 
-        private static bool ReplaceInnercontainer(ThingOwner innercontainer, List<FixedPawnDef.ThingData> list)
+        private static bool ReplaceInnercontainer(ThingOwner innercontainer, List<FixedPawnDef.ThingData> list, Pawn biocodedPawn = null)
         {
             if (list.Count == 0)
             {
@@ -150,8 +150,24 @@ namespace FixedPawnGenerate
 
                 thing.TryGetComp<CompQuality>()?.SetQuality(def.quality, ArtGenerationContext.Colony);
 
-                if (def.color.a != 0f)
-                    thing.TryGetComp<CompColorable>()?.SetColor(def.color);
+                if (def.color.HasValue)
+                    thing.TryGetComp<CompColorable>()?.SetColor(def.color.Value);
+
+                if (def.biocoded.HasValue && biocodedPawn != null)
+                {
+                    CompBiocodable compBiocodable = thing.TryGetComp<CompBiocodable>();
+                    if (compBiocodable != null)
+                    {
+                        if (def.biocoded.Value)
+                        {
+                            compBiocodable.CodeFor(biocodedPawn);
+                        }
+                        else
+                        {
+                            compBiocodable.UnCode();
+                        }
+                    }
+                }
 
                 innercontainer.TryAdd(thing, thing.stackCount);
             }
@@ -198,17 +214,17 @@ namespace FixedPawnGenerate
             if (def.hair != null)
                 pawn.story.hairDef = def.hair;
 
-            if (def.hairColor.a != 0f)
-                pawn.story.HairColor = def.hairColor;
+            if (def.hairColor.HasValue)
+                pawn.story.HairColor = def.hairColor.Value;
 
             //head
             if (def.headType != null)
                 pawn.story.headType = def.headType;
 
             //body
-            if (def.skinColor.a != 0f)
+            if (def.skinColor.HasValue)
             {
-                pawn.story.SkinColorBase = def.skinColor;
+                pawn.story.SkinColorBase = def.skinColor.Value;
 
                 //alien race compatible
                 if (!Compact_HAR.IsActive)
@@ -217,7 +233,7 @@ namespace FixedPawnGenerate
                 }
                 else
                 {
-                    Compact_HAR.SetPawnSkinColor(pawn, def.skinColor);
+                    Compact_HAR.SetPawnSkinColor(pawn, def.skinColor.Value);
                 }
             }
 
@@ -237,8 +253,8 @@ namespace FixedPawnGenerate
             //royalty
             if (ModsConfig.RoyaltyActive)
             {
-                if (def.favoriteColor.a != 0f)
-                    pawn.story.favoriteColor = new ColorDef() { color = def.favoriteColor };
+                if (def.favoriteColor.HasValue)
+                    pawn.story.favoriteColor = new ColorDef() { color = def.favoriteColor.Value };
                 //pawn.story.favoriteColor = def.favoriteColor;
             }
         }
@@ -256,11 +272,11 @@ namespace FixedPawnGenerate
                 SetPawnPersonalInfo(pawn, def);
 
                 //inventory
-                ReplaceInnercontainer(pawn.equipment.GetDirectlyHeldThings(), def.equipment);
+                ReplaceInnercontainer(pawn.equipment.GetDirectlyHeldThings(), def.equipment, pawn);
 
                 ReplaceInnercontainer(pawn.inventory.GetDirectlyHeldThings(), def.inventory);
 
-                ReplaceInnercontainer(pawn.apparel.GetDirectlyHeldThings(), def.apparel);
+                //ReplaceInnercontainer(pawn.apparel.GetDirectlyHeldThings(), def.apparel);
 
                 //CE gun ammo
                 if (Compact_CombatExtended.IsActive)
@@ -305,25 +321,25 @@ namespace FixedPawnGenerate
                     {
                         int traitDegree;
 
-                        if (traitData.trait.degreeDatas.Count == 1)
+                        if (traitData.def.degreeDatas.Count == 1)
                         {
                             traitDegree = 0;
                         }
                         else
                         {
-                            if (traitData.trait.degreeDatas.Find(x => x.degree == traitData.degree) != null)
+                            if (traitData.def.degreeDatas.Find(x => x.degree == traitData.degree) != null)
                             {
                                 traitDegree = traitData.degree;
                             }
                             else
                             {
-                                Log.Warning($"Trait {traitData.trait.defName} does not have degree {traitData.degree}, use First defined degree");
-                                traitDegree = traitData.trait.degreeDatas[0].degree;
+                                Log.Warning($"Trait {traitData.def.defName} does not have degree {traitData.degree}, use First defined degree");
+                                traitDegree = traitData.def.degreeDatas[0].degree;
                             }
                         }
 
                         //traits skill gain
-                        TraitDegreeData traitDegreeData = traitData.trait.degreeDatas.Find(x => x.degree == traitDegree);
+                        TraitDegreeData traitDegreeData = traitData.def.degreeDatas.Find(x => x.degree == traitDegree);
                         if (traitDegreeData != null && !traitDegreeData.skillGains.NullOrEmpty())
                         {
                             foreach (var skillGain in traitDegreeData.skillGains)
@@ -336,7 +352,7 @@ namespace FixedPawnGenerate
                             }
                         }
 
-                        pawn.story.traits.GainTrait(new Trait(traitData.trait, degree: traitDegree));
+                        pawn.story.traits.GainTrait(new Trait(traitData.def, degree: traitDegree));
                     }
                 }
 
@@ -556,11 +572,18 @@ namespace FixedPawnGenerate
                 if (ModsConfig.BiotechActive)
                 {
                     request.FixedBiologicalAge = def.age;
+                    request.FixedChronologicalAge = def.age;
                 }
                 else
                 {
                     request.FixedBiologicalAge = Mathf.Max(def.age, 13f);
+                    request.FixedChronologicalAge = Mathf.Max(def.age, 13f);
                 }
+            }
+
+            if (def.chronologicalAge > 0)
+            {
+                request.FixedChronologicalAge = def.chronologicalAge;
             }
 
             if (def.xenotype != null)
@@ -604,6 +627,18 @@ namespace FixedPawnGenerate
             FixedPawnHarmony.SetCompProperties(def);
 
             return null;
+        }
+
+        internal static void PostModifyPawn(Pawn pawn, FixedPawnDef def)
+        {
+            //apparel
+            ReplaceInnercontainer(pawn.apparel.GetDirectlyHeldThings(), def.apparel);
+
+            //recruitable
+            if (def.recruitable.HasValue)
+            {
+                pawn.guest.Recruitable = def.recruitable.Value;
+            }
         }
 
         public static Pawn GenerateFixedPawnWithDef(FixedPawnDef def, bool addToManager = true)
@@ -684,6 +719,8 @@ namespace FixedPawnGenerate
             result = PawnGenerator.GeneratePawn(request);
 
             ModifyPawn(result, def);
+
+            PostModifyPawn(result, def);
 
             if (result.Faction != faction)
             {

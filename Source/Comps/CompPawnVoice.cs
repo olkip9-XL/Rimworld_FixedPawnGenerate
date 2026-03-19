@@ -46,14 +46,14 @@ namespace FixedPawnGenerate
                 return;
             }
 
-            if (UnityEngine.Random.Range(0f, 1f) > 0.5f)
+            if (UnityEngine.Random.value > 0.5f)
                 PlayOneShot(PawnVoiceType.Damage);
         }
 
         public override void Notify_UsedVerb(Pawn pawn, Verb verb)
         {
             if (UnityEngine.Random.value > 0.5f)
-                pawn.PlayVoice(PawnVoiceType.Shout);
+                PlayOneShot(PawnVoiceType.Shout);
         }
 
     }

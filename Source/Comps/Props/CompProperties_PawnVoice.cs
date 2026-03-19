@@ -33,7 +33,8 @@ namespace FixedPawnGenerate
         Retire,
         Shout,
         Selected,
-        Lobby//x
+        Lobby,
+        KilledPawn
     }
     internal class CompProperties_PawnVoice : CompProperties
     {

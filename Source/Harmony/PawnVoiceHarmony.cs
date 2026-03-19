@@ -61,5 +61,21 @@ namespace FixedPawnGenerate
             }
         }
 
+        //KilledPawn
+        [HarmonyPatch(typeof(Pawn), "DoKillSideEffects")]
+        private static class Patch_KilledPawn
+        {
+            private static void Postfix(DamageInfo? dinfo)
+            {
+                if (((dinfo != null) ? dinfo.GetValueOrDefault().Instigator : null) != null)
+                {
+                    Pawn pawn = dinfo.Value.Instigator as Pawn;
+                    if (pawn != null)
+                    {
+                        pawn.PlayVoice(PawnVoiceType.KilledPawn);
+                    }
+                }
+            }
+        }
     }
 }
