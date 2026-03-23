@@ -22,4 +22,18 @@ namespace FixedPawnGenerate
             }
         }
     }
+
+    [HarmonyPatch(typeof(Pawn), "get_RaceProps")]
+    internal static class Patch_Pawn_RaceProps
+    {
+        static void Postfix(Pawn __instance, ref RaceProperties __result)
+        {
+            if (__instance.TryGetAlteredRaceProp() is RaceProperties props)
+            {
+                __result = props;
+            }
+        }
+    }
+
+
 }

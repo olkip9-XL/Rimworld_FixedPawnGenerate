@@ -22,20 +22,20 @@ namespace FixedPawnGenerate;
 public static class FixedPawnHarmony
 {
 
-    private static FixedPawnDef curPawnDef = null;
+    //private static FixedPawnDef curPawnDef = null;
+    //public static AsyncLocal<FixedPawnDef> curPawnDef = new AsyncLocal<FixedPawnDef>();
+    //public static void SetCompProperties(FixedPawnDef def)
+    //{
+    //    if (curPawnDef.Value == null)
+    //        curPawnDef.Value = def;
+    //}
 
-    public static void SetCompProperties(FixedPawnDef def)
-    {
-        if (curPawnDef == null)
-            curPawnDef = def;
-    }
-
-    public static FixedPawnDef GetCompProperties()
-    {
-        FixedPawnDef def = curPawnDef;
-        curPawnDef = null;
-        return def;
-    }
+    //public static FixedPawnDef GetCompProperties()
+    //{
+    //    FixedPawnDef def = curPawnDef.Value;
+    //    //curPawnDef.Value = null;
+    //    return def;
+    //}
 
 
     private static bool CallerInBlackList(string caller)
@@ -132,7 +132,7 @@ public static class FixedPawnHarmony
 
                 __state = def.defName;
 #if DEBUG
-                Log.Warning($"[FixedPawnGenerate] Prefix 调用者:{caller}, \n生成:{__state}");
+                Log.Warning($"[FixedPawnGenerate] 调用者:{caller}, \n生成:{__state}");
 #endif
 
                 __result = FixedPawnUtility.ModifyRequest(ref request, def, !isStarting);
@@ -145,7 +145,7 @@ public static class FixedPawnHarmony
 #if DEBUG
             else
             {
-                Log.Warning($"[FixedPawnGenerate] Prefix 调用者:{caller}, \n生成: No Match");
+                Log.Warning($"[FixedPawnGenerate] 调用者:{caller}, \n生成: No Match");
             }
 #endif
             return true;
@@ -184,7 +184,7 @@ public static class FixedPawnHarmony
 
 #if DEBUG
 
-            Log.Warning($"[FixedPawnGenerate] Request:\nfactionDef:{factionDef?.defName ?? "null"} \npawnKindDef:{pawnKindDef?.defName ?? "null"}, {race?.defName ?? "null"}");
+            Log.Warning($"[FixedPawnGenerate] Request: Faction:{factionDef?.defName ?? "null"} PawnKind:{pawnKindDef?.defName ?? "null"}, {race?.defName ?? "null"}");
 #endif
 
 
@@ -222,7 +222,7 @@ public static class FixedPawnHarmony
             if (__instance is Pawn pawn)
             {
                 //new Generate
-                FixedPawnDef fixedPawnDef = GetCompProperties();
+                FixedPawnDef fixedPawnDef = FixedPawnUtility.CurPawnDef;
 
                 //Load data
                 if (fixedPawnDef == null)

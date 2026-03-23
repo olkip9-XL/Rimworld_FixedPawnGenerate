@@ -113,7 +113,7 @@ public class FixedPawnDef : Def
 
     public HeadTypeDef headType = null;
 
-    public Color? favoriteColor;
+    public ColorDef favoriteColor;
 
     public TattooDef faceTattoo = null;
 
@@ -365,6 +365,27 @@ public class FixedPawnDef : Def
     public FPG_FacialAnimationProps facialAnimationProps = null;
 
     public List<String> tags = new List<String>();
+
+    public Type pawnGenerateWorker = typeof(PawnGenerateWorker);
+
+    private PawnGenerateWorker workerInt = null;
+
+    public PawnGenerateWorker Worker
+    {
+        get
+        {
+            if (pawnGenerateWorker == null || pawnGenerateWorker.IsAbstract)
+                return null;
+
+            if (workerInt == null)
+            {
+                workerInt = Activator.CreateInstance(pawnGenerateWorker) as PawnGenerateWorker;
+                workerInt.def = this;
+            }
+            return workerInt;
+        }
+    }
+
 
     public class RelationData
     {

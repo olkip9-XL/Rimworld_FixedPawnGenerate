@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
@@ -17,12 +18,27 @@ namespace FixedPawnGenerate
     [StaticConstructorOnStartup]
     public static class FixedPawnUtility
     {
+
+
         //public 
         public static readonly List<string> callerBlackList = new List<string>();
         public static GameComponent_FixedPawn Manager => Current.Game.GetComponent<GameComponent_FixedPawn>();
         public static ModSetting_FixedPawnGenerate Settings => LoadedModManager.GetMod<Mod_FixedPawnGenerate>().GetSettings<ModSetting_FixedPawnGenerate>();
 
         //private
+        //public static AsyncLocal<Guid> guid = new AsyncLocal<Guid>();
+        private static AsyncLocal<FixedPawnDef> curPawnDef = new AsyncLocal<FixedPawnDef>();
+
+        public static FixedPawnDef CurPawnDef
+        {
+            get
+            {
+                return curPawnDef.Value;
+            }
+        }
+
+
+
         static FixedPawnUtility()
         {
             //add Black List
@@ -114,7 +130,7 @@ namespace FixedPawnGenerate
 
         private static bool ReplaceInnercontainer(ThingOwner innercontainer, List<FixedPawnDef.ThingData> list, Pawn biocodedPawn = null)
         {
-            if (list.Count == 0)
+            if (list.NullOrEmpty())
             {
                 return false;
             }
@@ -251,11 +267,9 @@ namespace FixedPawnGenerate
             }
 
             //royalty
-            if (ModsConfig.RoyaltyActive)
+            if (ModsConfig.RoyaltyActive && def.favoriteColor != null)
             {
-                if (def.favoriteColor.HasValue)
-                    pawn.story.favoriteColor = new ColorDef() { color = def.favoriteColor.Value };
-                //pawn.story.favoriteColor = def.favoriteColor;
+                pawn.story.favoriteColor = def.favoriteColor;
             }
         }
 
@@ -268,6 +282,7 @@ namespace FixedPawnGenerate
 
             try
             {
+
                 //Personal info
                 SetPawnPersonalInfo(pawn, def);
 
@@ -275,8 +290,6 @@ namespace FixedPawnGenerate
                 ReplaceInnercontainer(pawn.equipment.GetDirectlyHeldThings(), def.equipment, pawn);
 
                 ReplaceInnercontainer(pawn.inventory.GetDirectlyHeldThings(), def.inventory);
-
-                //ReplaceInnercontainer(pawn.apparel.GetDirectlyHeldThings(), def.apparel);
 
                 //CE gun ammo
                 if (Compact_CombatExtended.IsActive)
@@ -302,19 +315,22 @@ namespace FixedPawnGenerate
                 SetPawnApparence(pawn, def);
 
                 //skills
-                foreach (var skillData in def.skills)
+                if (!def.skills.NullOrEmpty())
                 {
-                    SkillRecord skill = pawn.skills.GetSkill(skillData.skill);
-                    if (skill != null)
+                    foreach (var skillData in def.skills)
                     {
-                        skill.Level = skillData.level;
-                        if (skillData.replacePassion)
-                            skill.passion = skillData.passion;
+                        SkillRecord skill = pawn.skills.GetSkill(skillData.skill);
+                        if (skill != null)
+                        {
+                            skill.Level = skillData.level;
+                            if (skillData.replacePassion)
+                                skill.passion = skillData.passion;
+                        }
                     }
                 }
 
                 //traits
-                if (def.traits.Count > 0)
+                if (!def.traits.NullOrEmpty())
                 {
                     pawn.story.traits.allTraits.RemoveAll(x => x.sourceGene == null);
                     foreach (var traitData in def.traits)
@@ -357,7 +373,7 @@ namespace FixedPawnGenerate
                 }
 
                 //health
-                if (def.hediffs.Count > 0)
+                if (!def.hediffs.NullOrEmpty())
                 {
                     pawn.health.Reset();
                     foreach (var hediffData in def.hediffs)
@@ -379,11 +395,13 @@ namespace FixedPawnGenerate
                     }
                 }
 
-
                 //abilities
-                foreach (var ability in def.abilities)
+                if (!def.abilities.NullOrEmpty())
                 {
-                    pawn.abilities.GainAbility(ability);
+                    foreach (var ability in def.abilities)
+                    {
+                        pawn.abilities.GainAbility(ability);
+                    }
                 }
 
                 //FacialAnimation
@@ -413,6 +431,11 @@ namespace FixedPawnGenerate
             {
                 Log.Error($"[Fixed Pawn Generate] ModifyPawn {def?.defName ?? "null"} Error: {e.Message}");
             }
+            finally
+            {
+                curPawnDef.Value = null;
+            }
+
         }
 
         private static void GenerateRelations(Pawn pawn)
@@ -560,6 +583,7 @@ namespace FixedPawnGenerate
                 }
             }
 
+
             request.CanGeneratePawnRelations = false;
 
             if (request.Faction != null && request.Faction.ideos != null && request.Faction.ideos.PrimaryIdeo != null)
@@ -569,21 +593,12 @@ namespace FixedPawnGenerate
 
             if (def.age > 0)
             {
-                if (ModsConfig.BiotechActive)
-                {
-                    request.FixedBiologicalAge = def.age;
-                    request.FixedChronologicalAge = def.age;
-                }
-                else
-                {
-                    request.FixedBiologicalAge = Mathf.Max(def.age, 13f);
-                    request.FixedChronologicalAge = Mathf.Max(def.age, 13f);
-                }
+                request.FixedBiologicalAge = ModsConfig.BiotechActive ? def.age : Mathf.Max(def.age, 13f);
             }
 
             if (def.chronologicalAge > 0)
             {
-                request.FixedChronologicalAge = def.chronologicalAge;
+                request.FixedChronologicalAge = ModsConfig.BiotechActive ? def.chronologicalAge : Mathf.Max(def.chronologicalAge, 13f);
             }
 
             if (def.xenotype != null)
@@ -624,7 +639,9 @@ namespace FixedPawnGenerate
                 request.ForceBodyType = def.bodyType;
 
             //comps properties
-            FixedPawnHarmony.SetCompProperties(def);
+            curPawnDef.Value = def;
+
+            //Log.Warning($"[Fixed Pawn Generate] =============== GUID: {guid}, def: {def?.defName ?? "null"}");
 
             return null;
         }
@@ -638,6 +655,16 @@ namespace FixedPawnGenerate
             if (def.recruitable.HasValue)
             {
                 pawn.guest.Recruitable = def.recruitable.Value;
+            }
+
+            //custom generate worker
+            try
+            {
+                def.Worker?.PostGenerate(pawn);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[Fixed Pawn Generate] Error when applying custom pawnGenerateWorker\ndef: {def.defName}\ntype: {def.pawnGenerateWorker}\nException: {e}");
             }
         }
 

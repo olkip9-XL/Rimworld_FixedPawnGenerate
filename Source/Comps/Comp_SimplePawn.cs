@@ -52,10 +52,14 @@ namespace FixedPawnGenerate
         {
             Scribe_Values.Look(ref curTag, "curTag", "default");
         }
-       
         
         public virtual void Notify_TagSwitched(string tag)
         {
+        }
+
+        public override void PostSpawnSetup(bool respawningAfterLoad)
+        {
+            PawnRacepropUtility.AddAlteredRaceProp(pawn);
         }
 
     }
