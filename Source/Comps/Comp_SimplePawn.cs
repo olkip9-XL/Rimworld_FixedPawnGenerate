@@ -61,6 +61,5 @@ namespace FixedPawnGenerate
         {
             PawnRacepropUtility.AddAlteredRaceProp(pawn);
         }
-
     }
 }

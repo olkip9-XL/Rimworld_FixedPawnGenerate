@@ -88,8 +88,8 @@
     <Compile Include="Harmony\Harmony_CommsMenu.cs" />
     <Compile Include="Harmony\Harmony_HairGraphic.cs" />
     <Compile Include="Harmony\ModExtensionHarmony\ModExtHarmony_UniqueWeaponExt.cs" />
-    <Compile Include="Harmony\PawnVoiceHarmony.cs" />
-    <Compile Include="Harmony\SimplePawnHarmony.cs" />
+    <Compile Include="Harmony\Harmony_PawnVoice.cs" />
+    <Compile Include="Harmony\Harmony_SimplePawn.cs" />
     <Compile Include="Incident\IncidentWorker\IncidentWorker_FixedPawnJoin.cs" />
     <Compile Include="Incident\IncidentWorker\IncidentWorker_GiveQuest_FPG.cs" />
     <Compile Include="Incident\QuestNode\QuestNode_Root_FixedPawn_Arrival.cs" />
