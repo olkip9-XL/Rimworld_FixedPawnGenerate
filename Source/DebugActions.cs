@@ -99,11 +99,28 @@ namespace FixedPawnGenerate
         //[DebugAction("FixedPawnGenerate", "FPG: Export Local texture", false, false, false, false, false, 0, false, allowedGameStates = AllowedGameStates.PlayingOnMap)]
         private static void ExportTexture()
         {
-            string path = $"Things/Mote";
+            List<string> paths = new List<string>()
+            {
 
+            };
+
+            foreach (string path in paths)
+            {
+                ExportTexture(path);
+            }
+        }
+
+        private static void ExportTexture(string path)
+        {
             foreach (var tex in ContentFinder<Texture2D>.GetAllInFolder(path))
             {
-                RenderTexture rt = RenderTexture.GetTemporary(512, 512, 0, RenderTextureFormat.ARGB32);
+                if (tex != null)
+                    continue;
+
+                int width = tex.width;
+                int height = tex.height;
+
+                RenderTexture rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
 
                 RenderTexture.active = rt;
                 Graphics.Blit(tex, rt);

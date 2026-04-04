@@ -10,7 +10,7 @@ namespace FixedPawnGenerate
 {
     internal class ModExtension_HairExt : DefModExtension
     {
-        public Vector2 drawSize;
+        public Vector2 drawSize = new Vector2(1f, 1f);
         public string extraHairGraphicPath;
     }
 }
