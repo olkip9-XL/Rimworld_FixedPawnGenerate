@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-  
+
   <allowRelation>Allow natural generation of character relationships</allowRelation>
   <allowRelationDescription>Allow natural generation of character relationships</allowRelationDescription>
 
@@ -36,5 +36,7 @@
 
   <FPG_voiceVolumeFactor>Voice volume: {0}</FPG_voiceVolumeFactor>
   <FPG_voiceVolumeFactor_description>Range is 0~1</FPG_voiceVolumeFactor_description>
+
+  <FPG_ToggleMirageApparel>Toggle mirage apparel</FPG_ToggleMirageApparel>
 
 </LanguageData>

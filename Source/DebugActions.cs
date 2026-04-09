@@ -13,6 +13,7 @@ namespace FixedPawnGenerate
 {
     public static class DebugActions
     {
+        private static List<RenderTexture> pawnTextures = new List<RenderTexture>();
 
         [DebugAction("FixedPawnGenerate", "FPG: Log spawned pawns", false, false, false, false, allowedGameStates = AllowedGameStates.Playing)]
         private static void LogSpawnedPawns()
@@ -57,43 +58,60 @@ namespace FixedPawnGenerate
 
         private static void ExportPawnTex()
         {
-
             Pawn pawn = Find.CurrentMap.thingGrid.ThingsAt(UI.MouseCell()).OfType<Pawn>().FirstOrDefault();
             if (pawn != null)
             {
+                if (pawnTextures.NullOrEmpty() || pawnTextures.Count < 4)
+                {
+                    pawnTextures = new List<RenderTexture>();
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        RenderTexture rt = new RenderTexture(512, 512, 24, RenderTextureFormat.ARGB32);
+                        pawnTextures.Add(rt);
+                    }
+                }
+
                 List<Rot4> rot4s = new List<Rot4>() { Rot4.North, Rot4.East, Rot4.South, Rot4.West };
 
                 foreach (var rot in rot4s)
                 {
-                    RenderTexture rt = RenderTexture.GetTemporary(512, 512, 0, RenderTextureFormat.ARGB32);
-
-                    CreatePawnTex(ref rt, pawn, new Vector2(0f, 0f), rot, 1f, 0f);
-                    Texture2D tex = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
-                    RenderTexture.active = rt;
-                    tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-                    tex.Apply();
-                    RenderTexture.active = null;
-
-                    //create dir
-                    string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "PawnTex", pawn.LabelShort);
-
-                    System.IO.Directory.CreateDirectory(folderPath);
-
-                    byte[] bytes = tex.EncodeToPNG();
-                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(folderPath, $"{rot}.png"), bytes);
+                    ExportPawnToImage(pawn, rot);
                 }
 
                 Messages.Message($"Exported {pawn.LabelShort}'s portrait to Desktop", MessageTypeDefOf.NeutralEvent);
             }
         }
 
-        private static RenderTexture CreatePawnTex(ref RenderTexture pawnTex, Pawn pawn, Vector2 offset, Rot4 rot, float zoom, float angle)
+        public static void ExportPawnToImage(Pawn pawn, Rot4 rot, int width = 512, int height = 512)
         {
-            Vector3 cameraOffset = Vector3.left * offset.x + Vector3.forward * offset.y;
+            if (pawn == null) return;
 
-            Find.PawnCacheRenderer.RenderPawn(pawn, pawnTex, cameraOffset, zoom, angle, rot);
-            return pawnTex;
+            string exportDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "PawnTex", pawn.LabelShort);
+
+            RenderTexture rt = pawnTextures[(int)rot.AsInt];
+            RenderTexture.active = rt;
+
+            pawn.Drawer.renderer.SetAllGraphicsDirty();
+            PortraitsCache.SetDirty(pawn);
+
+            Find.PawnCacheRenderer.RenderPawn(pawn, rt, Vector3.zero, 1f, 0f, rot);
+
+            Texture2D tex = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+            tex.Apply();
+            RenderTexture.active = null;
+
+            byte[] bytes = tex.EncodeToPNG();
+
+            Directory.CreateDirectory(exportDirectory);
+            string filePath = Path.Combine(exportDirectory, $"{rot.ToString()}.png");
+            File.WriteAllBytes(filePath, bytes);
+
+            UnityEngine.Object.Destroy(tex);
         }
+
+
 
         // Export local texture, for debug use
         //[DebugAction("FixedPawnGenerate", "FPG: Export Local texture", false, false, false, false, false, 0, false, allowedGameStates = AllowedGameStates.PlayingOnMap)]

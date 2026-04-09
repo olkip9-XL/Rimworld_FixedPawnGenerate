@@ -36,5 +36,7 @@
 
   <FPG_voiceVolumeFactor>语音音量：{0}</FPG_voiceVolumeFactor>
   <FPG_voiceVolumeFactor_description>语音的音量，范围是0~1</FPG_voiceVolumeFactor_description>
+
+  <FPG_ToggleMirageApparel>切换服装幻化</FPG_ToggleMirageApparel>
   
 </LanguageData>

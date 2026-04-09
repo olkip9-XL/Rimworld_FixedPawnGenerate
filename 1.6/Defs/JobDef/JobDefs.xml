@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <JobDef>
+    <defName>FPG_ToggleMirageApparel</defName>
+    <driverClass>FixedPawnGenerate.JobDriver_ToggleMirageApparel</driverClass>
+    <reportString>toggling mirage apparel...</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+</Defs>
