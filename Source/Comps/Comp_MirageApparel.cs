@@ -10,7 +10,7 @@ namespace FixedPawnGenerate;
 
 public class Comp_MirageApparel : ThingComp
 {
-    private static List<Apparel> cachedApparel = null;
+    private List<Apparel> cachedApparel = null;
 
     public CompProperties_MirageApparel Props => (CompProperties_MirageApparel)this.props;
 

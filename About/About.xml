@@ -27,6 +27,10 @@
     <li>Nals.FacialAnimationExperimentals</li>
   </loadAfter>
 
+  <loadBefore>
+    <li>costel.layeredapparel</li>
+  </loadBefore>
+
   <url>https://github.com/olkip9-XL/Rimworld-FixedPawnGenerate</url>
 
 </ModMetaData>

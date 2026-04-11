@@ -61,8 +61,12 @@ internal class PawnRenderNode_Apparel_Extra : PawnRenderNode_Apparel
             }
         }
 
-        return GraphicDatabase.Get<Graphic_Multi>(path, shader, apparel.def.graphicData.drawSize, apparel.DrawColor);
+        Color color = Props.color.HasValue ? Props.color.Value : apparel.DrawColor;
+
+        return GraphicDatabase.Get<Graphic_Multi>(path, shader, apparel.def.graphicData.drawSize, color);
     }
+
+
 
 
 }

@@ -13,7 +13,7 @@ namespace FixedPawnGenerate;
 [HarmonyPatch(typeof(DynamicPawnRenderNodeSetup_Apparel), "GetDynamicNodes", MethodType.Enumerator)]
 internal static class Patch_DynamicPawnRenderNodeSetup_Apparel_GetDynamicNodes
 {
-    public static List<Apparel> CustomGetApparel(Pawn pawn)
+    public static List<Apparel> CustomGetApparel(Pawn pawn, List<Apparel> originalApparels)
     {
         if (pawn.TryGetComp<Comp_MirageApparel>() is Comp_MirageApparel comp)
         {
@@ -23,7 +23,7 @@ internal static class Patch_DynamicPawnRenderNodeSetup_Apparel_GetDynamicNodes
             }
         }
 
-        return pawn.apparel.WornApparel;
+        return originalApparels;
     }
 
     [HarmonyTranspiler]
@@ -39,12 +39,13 @@ internal static class Patch_DynamicPawnRenderNodeSetup_Apparel_GetDynamicNodes
             // 查找 ldfld pawn.apparel 接着调用 get_WornApparel() 
             if (codes[i].LoadsField(apparelField) && codes[i + 1].Calls(wornApparelGetter))
             {
-                // 将 ldfld pawn.apparel 替换为 Nop，这样 Pawn 的实例会留在栈上
-                codes[i].opcode = System.Reflection.Emit.OpCodes.Nop;
-                codes[i].operand = null;
-                // 将 get_WornApparel() 的调用替换为对自定义函数的调用
-                codes[i + 1].opcode = System.Reflection.Emit.OpCodes.Call;
-                codes[i + 1].operand = customMethod;
+                var dup = new CodeInstruction(System.Reflection.Emit.OpCodes.Dup);
+                dup.MoveLabelsFrom(codes[i]); // 保护可能存在的跳转标签
+                codes.Insert(i, dup);
+
+                // 在 get_WornApparel() 之后插入我们的修改方法，其将会消耗栈上的 Pawn 和原 List<Apparel>
+                codes.Insert(i + 3, new CodeInstruction(System.Reflection.Emit.OpCodes.Call, customMethod));
+                i += 3; // 跳过我们插入的指令
             }
         }
         return codes;

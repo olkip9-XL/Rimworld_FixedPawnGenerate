@@ -27,6 +27,7 @@ namespace FixedPawnGenerate
             this.messageType = success ? MessageTypeDefOf.PositiveEvent : MessageTypeDefOf.RejectInput;
         }
 
+        //预设
         public static GachaResult Failure(bool consumedResources, string failReason)
         {
             return new GachaResult(false, consumedResources, failReason, null);
@@ -37,27 +38,54 @@ namespace FixedPawnGenerate
             return new GachaResult(true, true, null, fixedPawnDef);
         }
 
+        public static GachaResult NotEnoughResources(string failReason)
+        {
+            return new GachaResult(false, false, failReason, null);
+        }
+
+        public static GachaResult NoMorePawns(string failReason)
+        {
+            return new GachaResult(false, false, failReason, null);
+        }
+
+        public static GachaResult GachaFailed(string failReason)
+        {
+            return new GachaResult(false, true, failReason, null);
+        }
+
     }
-
-
 
     public class CommsGachaConfigWorker
     {
         public CommsGachaConfigDef def;
 
-        List<FixedPawnDef> AllPawns => DefDatabase<FixedPawnDef>.AllDefsListForReading.FindAll(x => x.tags.Intersect(def.gachaTags).Any());
-        List<FixedPawnDef> SpawnedPawns
+        private List<FixedPawnDef> cachedAllPawns;
+        public List<FixedPawnDef> AllPawns
         {
             get
             {
-                List<FixedPawnDef> list = new List<FixedPawnDef>();
+                if (cachedAllPawns == null)
+                {
+                    cachedAllPawns = DefDatabase<FixedPawnDef>.AllDefsListForReading
+                        .FindAll(x => x.tags != null && x.tags.Intersect(def.gachaTags).Any());
+                }
+                return cachedAllPawns;
+            }
+        }
 
+        public List<FixedPawnDef> SpawnedPawns
+        {
+            get
+            {
+                HashSet<FixedPawnDef> set = new HashSet<FixedPawnDef>();
                 foreach (var tag in def.gachaTags)
                 {
-                    list.AddRange(FixedPawnUtility.SpawnedPawnWithTag(tag));
+                    foreach (var pawn in FixedPawnUtility.SpawnedPawnWithTag(tag))
+                    {
+                        set.Add(pawn);
+                    }
                 }
-
-                return list;
+                return set.ToList();
             }
         }
         public List<FixedPawnDef> RemainPawns => AllPawns.Except(SpawnedPawns).ToList();
@@ -66,10 +94,9 @@ namespace FixedPawnGenerate
         {
             get
             {
-                string costStr = string.Join(", ",
-                    def.gachaCost.Select(
-                        cc => cc.count + "x" + cc.thingDef.label)
-                    );
+                string costStr = def.gachaCost.NullOrEmpty()
+                    ? "Free"
+                    : string.Join(", ", def.gachaCost.Select(cc => cc.count + "x " + cc.thingDef.label));
 
                 return $"{def.label} ({costStr})";
             }
@@ -78,29 +105,40 @@ namespace FixedPawnGenerate
 
         public virtual void DoGacha(Pawn caller, int times = 1)
         {
-            for (int i = 0; i < times; i++)
+            int maxTimes = MaxGachaAvailable(caller.Map);
+
+            int gachaTimes = times;
+
+            if (maxTimes < times)
+            {
+                gachaTimes = maxTimes + 1;
+            }
+
+            for (int i = 0; i < gachaTimes; i++)
             {
                 GachaResult result = GachaAction(caller);
 
-                if (result.failReason != null)
-                {
-                    Messages.Message(result.failReason, result.messageType);
-                }
+                HandleGachaResult(result, caller);
+            }
+        }
 
-                if (result.consumedResources)
-                {
-                    ConsumeResources(caller.Map);
-                }
-
-                if (result.success)
-                {
-                    SuccessAction(caller, result.fixedPawnDef);
-                }
-
-                if (!result.success && result.consumedResources)
-                {
-                    FailAction(caller);
-                }
+        protected virtual void HandleGachaResult(GachaResult result, Pawn caller)
+        {
+            if (result.failReason != null)
+            {
+                Messages.Message(result.failReason, result.messageType);
+            }
+            if (result.consumedResources)
+            {
+                ConsumeResources(caller.Map);
+            }
+            if (result.success)
+            {
+                SuccessAction(caller, result.fixedPawnDef);
+            }
+            if (!result.success && result.consumedResources)
+            {
+                FailAction(caller);
             }
         }
 
@@ -109,25 +147,27 @@ namespace FixedPawnGenerate
             //资源不足
             if (!HasEnoughResources(caller.Map))
             {
-                return GachaResult.Failure(false, def.notEnoughResourcesMessage);
+                return GachaResult.NotEnoughResources(def.notEnoughResourcesMessage);
             }
 
+            List<FixedPawnDef> remain = RemainPawns;
+
             //剩余角色不足
-            if (RemainPawns.NullOrEmpty())
+            if (remain.NullOrEmpty())
             {
-                return GachaResult.Failure(true, def.noMorePawnsMessage);
+                return GachaResult.NoMorePawns(def.noMorePawnsMessage);
             }
 
             //抽卡判定
             if (UnityEngine.Random.value <= def.baseGachaChance)
             {
-                FixedPawnDef fixedPawnDef = FixedPawnUtility.GetRandomFixedPawnDefByWeight(RemainPawns);
+                FixedPawnDef fixedPawnDef = FixedPawnUtility.GetRandomFixedPawnDefByWeight(remain);
 
                 return GachaResult.Success(fixedPawnDef);
             }
             else
             {
-                return GachaResult.Failure(true, def.failMessage);
+                return GachaResult.GachaFailed(def.failMessage);
             }
         }
 
@@ -170,6 +210,34 @@ namespace FixedPawnGenerate
 
             //通知
             SuccessMessage(pawn, map);
+        }
+
+        protected virtual int MaxGachaAvailable(Map map)
+        {
+            if (def.gachaCost.NullOrEmpty())
+            {
+                return RemainPawns.Count; // 免费抽卡，次数无限
+            }
+
+            int maxTimes = int.MaxValue;
+
+            foreach (var cost in def.gachaCost)
+            {
+                int available = (from t in TradeUtility.AllLaunchableThingsForTrade(map)
+                                 where t.def == cost.thingDef
+                                 select t).Sum((Thing t) => t.stackCount);
+
+                int timesForThisCost = available / cost.count;
+
+                if (timesForThisCost == 0)
+                {
+                    return 0; // 如果某项资源不足以支付1次，直接返回0
+                }
+
+                maxTimes = Math.Min(maxTimes, timesForThisCost);
+            }
+
+            return Math.Min(maxTimes, RemainPawns.Count);
         }
 
         protected virtual bool HasEnoughResources(Map map)
@@ -232,8 +300,9 @@ namespace FixedPawnGenerate
             IntVec3 intVec = DropCellFinder.TradeDropSpot(map);
             TradeUtility.SpawnDropPod(intVec, map, thing);
 
-            Messages.Message(def.failMessage, new LookTargets(thing.Position, map), MessageTypeDefOf.PositiveEvent);
+            Messages.Message(def.failMessage, new LookTargets(thing), MessageTypeDefOf.NeutralEvent);
         }
+
 
     }
 }
