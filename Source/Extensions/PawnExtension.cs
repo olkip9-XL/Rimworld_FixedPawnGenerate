@@ -25,7 +25,9 @@ namespace FixedPawnGenerate
     {
         public static FixedPawnDef GetFixedPawnDef(this Pawn pawn)
         {
-            return FixedPawnUtility.Manager.GetDef(pawn);
+            if (pawn == null) return null;
+
+            return FixedPawnUtility.Manager?.GetDef(pawn);
         }
 
         public static PawnPositionState GetPawnPositionState(this Pawn pawn)
@@ -68,17 +70,17 @@ namespace FixedPawnGenerate
 
             return PawnPositionState.OTHER;
         }
-    
+
         public static bool IsUniquePawn(this Pawn pawn)
         {
             FixedPawnDef def = pawn.GetFixedPawnDef();
 
-            if(def != null && def.isUnique)
+            if (def != null && def.isUnique)
                 return true;
             else
                 return false;
         }
-    
+
         public static bool HasFixedPawnTag(this Pawn pawn, string tag)
         {
             FixedPawnDef def = pawn.GetFixedPawnDef();
@@ -88,7 +90,7 @@ namespace FixedPawnGenerate
 
         public static void PlayVoice(this Pawn pawn, PawnVoiceType type)
         {
-            if(pawn == null)
+            if (pawn == null)
                 return;
 
             CompPawnVoice comp = pawn.GetComp<CompPawnVoice>();

@@ -22,7 +22,7 @@ namespace FixedPawnGenerate
 
         //public 
         public static readonly List<string> callerBlackList = new List<string>();
-        public static GameComponent_FixedPawn Manager => Current.Game.GetComponent<GameComponent_FixedPawn>();
+        public static GameComponent_FixedPawn Manager => Current.Game?.GetComponent<GameComponent_FixedPawn>();
         public static ModSetting_FixedPawnGenerate Settings => LoadedModManager.GetMod<Mod_FixedPawnGenerate>().GetSettings<ModSetting_FixedPawnGenerate>();
 
         //private

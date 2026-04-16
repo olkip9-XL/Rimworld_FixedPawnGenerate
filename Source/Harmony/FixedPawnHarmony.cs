@@ -219,25 +219,36 @@ public static class FixedPawnHarmony
     {
         public static void Postfix(ThingWithComps __instance)
         {
-            if (__instance is Pawn pawn)
+            try
             {
-                //new Generate
-                FixedPawnDef fixedPawnDef = FixedPawnUtility.CurPawnDef;
-
-                //Load data
-                if (fixedPawnDef == null)
+                if (__instance is Pawn pawn)
                 {
-                    fixedPawnDef = FixedPawnUtility.Manager.GetDef(pawn);
-                }
+                    //new Generate
+                    FixedPawnDef fixedPawnDef = FixedPawnUtility.CurPawnDef;
 
-                if (fixedPawnDef != null && !fixedPawnDef.comps.NullOrEmpty())
-                {
-                    foreach (var comp in fixedPawnDef.comps)
+                    //Load data
+                    if (fixedPawnDef == null)
                     {
-                        AddComp(__instance, comp);
+                        fixedPawnDef = pawn.GetFixedPawnDef();
+                    }
+
+                    if (fixedPawnDef != null && !fixedPawnDef.comps.NullOrEmpty())
+                    {
+                        foreach (var comp in fixedPawnDef.comps)
+                        {
+                            if (comp == null)
+                            {
+                                Log.Error($"[FixedPawnGenerate] Trying to add a null comp to Pawn:{pawn.Name}");
+                                continue;
+                            }
+                            AddComp(__instance, comp);
+                        }
                     }
                 }
-
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[FixedPawnGenerate] InitializeComps error. Thing:{__instance?.ThingID ?? "null"}, Exception:{e}");
             }
         }
     }
@@ -295,14 +306,21 @@ public static class FixedPawnHarmony
     {
         public static void Postfix(ref Pawn __result, ref PawnGenerationRequest request)
         {
-            Pawn pawn = __result;
-            if (pawn != null)
+            try
             {
-                FixedPawnDef fixedPawnDef = pawn.GetFixedPawnDef();
-                if (fixedPawnDef != null)
+                Pawn pawn = __result;
+                if (pawn != null)
                 {
-                    FixedPawnUtility.PostModifyPawn(pawn, fixedPawnDef);
+                    FixedPawnDef fixedPawnDef = pawn.GetFixedPawnDef();
+                    if (fixedPawnDef != null)
+                    {
+                        FixedPawnUtility.PostModifyPawn(pawn, fixedPawnDef);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"[FixedPawnGenerate] GeneratePawn error. Pawn:{__result?.Name}, Request:{request}, Exception:{e}");
             }
         }
     }

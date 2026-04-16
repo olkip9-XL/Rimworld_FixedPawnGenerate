@@ -73,8 +73,10 @@
   <ItemGroup>
     <Compile Include="AbilityComps\PawnVoice\CompAbilityEffect_PawnVoice.cs" />
     <Compile Include="AbilityComps\PawnVoice\CompProperties_AbilityPawnVoice.cs" />
+    <Compile Include="Comps\Props\CompProperties_OverrideBodyGraphic.cs" />
     <Compile Include="Comps\Props\CompProperties_MirageApparel.cs" />
     <Compile Include="Comps\Comp_MirageApparel.cs" />
+    <Compile Include="Comps\Comp_OverrideBodyGraphic.cs" />
     <Compile Include="DefOf\FPG_JobDefOf.cs" />
     <Compile Include="Defs\CommsGachaConfigDef.cs" />
     <Compile Include="CommsGachaConfigWorker.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="GameComponent\GameComponent_PawnVoice.cs" />
     <Compile Include="Harmony\FixedPawnCompsHarmony.cs" />
     <Compile Include="Harmony\Harmony_CommsMenu.cs" />
+    <Compile Include="Harmony\Harmony_DrawBody.cs" />
     <Compile Include="Harmony\Harmony_HairGraphic.cs" />
     <Compile Include="Harmony\Harmony_MirageApparel.cs" />
     <Compile Include="Harmony\Harmony_StylingStationMenu.cs" />
