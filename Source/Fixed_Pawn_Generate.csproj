@@ -39,10 +39,6 @@
       <HintPath>..\..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="FacialAnimation">
-      <HintPath>..\..\..\..\..\workshop\content\294100\1635901197\1.5\Assemblies\FacialAnimation.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -112,6 +108,7 @@
     <Compile Include="DebugActions.cs" />
     <Compile Include="ModCompatible\Alienrace\FPG_AlienraceAddonProps.cs" />
     <Compile Include="ModCompatible\Compact_CombatExtended.cs" />
+    <Compile Include="ModCompatible\Compact_FacialAnimation.cs" />
     <Compile Include="ModCompatible\FPG_FacialAnimationProps.cs" />
     <Compile Include="Defs\FixedPawnDef.cs" />
     <Compile Include="DefOf\FixedPawnDefOf.cs" />

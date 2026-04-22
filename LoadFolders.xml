@@ -9,5 +9,7 @@
     <li>Common</li>
     <li IfModActive="erdelf.HumanoidAlienRaces">1.6/Compact_HAR</li>
     <li IfModActive="CETeam.CombatExtended">1.6/Compact_CE</li>
+    <li IfModActive="CETeam.CombatExtended_copy">1.6/Compact_CE</li>
+    <li IfModActive="Nals.FacialAnimation">1.6/Compact_FA</li>
   </v1.6>
 </LoadFolders>

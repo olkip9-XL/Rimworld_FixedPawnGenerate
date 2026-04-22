@@ -33,7 +33,7 @@ namespace FixedPawnGenerate
             if (modExt.extraHairGraphicPath.NullOrEmpty())
                 return null;
 
-            return GraphicDatabase.Get<Graphic_Multi>(modExt.extraHairGraphicPath, hairDef.overrideShaderTypeDef?.Shader ?? ShaderDatabase.CutoutHair, Vector2.one, this.ColorFor(pawn));
+            return GraphicDatabase.Get<Graphic_Multi>(modExt.extraHairGraphicPath, hairDef.overrideShaderTypeDef?.Shader ?? ShaderDatabase.CutoutComplexBlend, Vector2.one, this.ColorFor(pawn));
         }
     }
 }

@@ -11,6 +11,7 @@ using Verse;
 
 namespace FixedPawnGenerate
 {
+
     public static class DebugActions
     {
         private static List<RenderTexture> pawnTextures = new List<RenderTexture>();
@@ -87,7 +88,9 @@ namespace FixedPawnGenerate
         {
             if (pawn == null) return;
 
-            string exportDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "PawnTex", pawn.LabelShort);
+            string pawnName = System.Text.RegularExpressions.Regex.Replace(pawn.LabelShort, "<[^>]+>", "");
+
+            string exportDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "PawnTex", pawnName);
 
             RenderTexture rt = pawnTextures[(int)rot.AsInt];
             RenderTexture.active = rt;
@@ -119,7 +122,7 @@ namespace FixedPawnGenerate
         {
             List<string> paths = new List<string>()
             {
-
+                "Things/Mote/PsychicLinkLine"
             };
 
             foreach (string path in paths)
@@ -130,9 +133,33 @@ namespace FixedPawnGenerate
 
         private static void ExportTexture(string path)
         {
-            foreach (var tex in ContentFinder<Texture2D>.GetAllInFolder(path))
+            Texture2D tex = ContentFinder<Texture2D>.Get(path);
+            if (tex == null)
             {
-                if (tex != null)
+                Log.Error($"Texture not found: {path}");
+                return;
+            }
+            int width = tex.width;
+            int height = tex.height;
+            RenderTexture rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
+            RenderTexture.active = rt;
+            Graphics.Blit(tex, rt);
+            Texture2D tempTex = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
+            tempTex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
+            tempTex.Apply();
+            RenderTexture.active = null;
+            //create dir
+            string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "RimworldTexture");
+            System.IO.Directory.CreateDirectory(folderPath);
+            byte[] bytes = tempTex.EncodeToPNG();
+            System.IO.File.WriteAllBytes(System.IO.Path.Combine(folderPath, $"{path.Replace("/", "_")}.png"), bytes);
+        }
+
+        private static void ExportTextureFolder(string folderPath)
+        {
+            foreach (var tex in ContentFinder<Texture2D>.GetAllInFolder(folderPath))
+            {
+                if (tex == null)
                     continue;
 
                 int width = tex.width;
@@ -149,10 +176,10 @@ namespace FixedPawnGenerate
                 RenderTexture.active = null;
 
                 //create dir
-                string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "RimworldTexture");
-                System.IO.Directory.CreateDirectory(folderPath);
+                string exportDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "RimworldTexture");
+                System.IO.Directory.CreateDirectory(exportDirectory);
                 byte[] bytes = tempTex.EncodeToPNG();
-                System.IO.File.WriteAllBytes(System.IO.Path.Combine(folderPath, $"{tex.name}.png"), bytes);
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(exportDirectory, $"{tex.name}.png"), bytes);
             }
         }
 

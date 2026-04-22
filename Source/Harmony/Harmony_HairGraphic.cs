@@ -12,7 +12,6 @@ namespace FixedPawnGenerate
 {
     internal static class Harmony_HairGraphic
     {
-
         [HarmonyPatch(typeof(PawnRenderNodeWorker), "ScaleFor")]
         static class Patch_Test
         {
@@ -32,7 +31,6 @@ namespace FixedPawnGenerate
                 }
             }
         }
-
 
     }
 }

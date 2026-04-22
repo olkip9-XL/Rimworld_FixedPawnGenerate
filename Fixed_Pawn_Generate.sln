@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compact_HAR", "Source\Compa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compact_CE", "Source\Compact_CE\Compact_CE.csproj", "{DEED1021-D56A-47DC-8363-EE8EB39EF490}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compact_FA", "Source\Compact_FA\Compact_FA.csproj", "{DA8DF61B-B950-41AE-B3F0-24AC9E78054D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DEED1021-D56A-47DC-8363-EE8EB39EF490}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEED1021-D56A-47DC-8363-EE8EB39EF490}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEED1021-D56A-47DC-8363-EE8EB39EF490}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA8DF61B-B950-41AE-B3F0-24AC9E78054D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA8DF61B-B950-41AE-B3F0-24AC9E78054D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA8DF61B-B950-41AE-B3F0-24AC9E78054D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA8DF61B-B950-41AE-B3F0-24AC9E78054D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

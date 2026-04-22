@@ -405,10 +405,7 @@ namespace FixedPawnGenerate
                 }
 
                 //FacialAnimation
-                if (ModLister.HasActiveModWithName("[NL] Facial Animation - WIP") && def.facialAnimationProps != null)
-                {
-                    def.facialAnimationProps.SetPawn(pawn);
-                }
+                def.facialAnimationProps?.SetPawn(pawn);
 
                 //alienrace addons
                 if (Compact_HAR.IsActive && !def.alienraceAddonProps.NullOrEmpty())
