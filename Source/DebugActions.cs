@@ -114,6 +114,42 @@ namespace FixedPawnGenerate
             UnityEngine.Object.Destroy(tex);
         }
 
+        [DebugAction("FixedPawnGenerate", "FPG: Force assign fixedPawnDef", false, false, false, false, false, 0, false, actionType = DebugActionType.ToolMap, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static List<DebugActionNode> ForceAssignDef()
+        {
+            List<DebugActionNode> list = new List<DebugActionNode>();
+            foreach (var def in DefDatabase<FixedPawnDef>.AllDefs)
+            {
+                DebugActionNode node = new DebugActionNode(def.defName, DebugActionType.ToolMap, delegate
+                {
+                    Pawn pawn = Find.CurrentMap.thingGrid.ThingsAt(UI.MouseCell()).OfType<Pawn>().FirstOrDefault();
+                    if (pawn != null)
+                    {
+                        GameComponent_FixedPawn game = Current.Game?.GetComponent<GameComponent_FixedPawn>();
+                        if (game != null)
+                        {
+                            game.AddPawn(pawn, def, true);
+
+                            Messages.Message($"Assigned {def.defName} to {pawn.LabelShort}", MessageTypeDefOf.NeutralEvent);
+                        }
+                    }
+                });
+
+                if (def.isUnique)
+                {
+                    node.label += " ★";
+                    node.category = "Unique Pawns";
+                }
+                else
+                {
+                    node.category = "Regular Pawns";
+                }
+
+                list.Add(node);
+            }
+
+            return list;
+        }
 
 
         // Export local texture, for debug use

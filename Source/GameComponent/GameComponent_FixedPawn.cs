@@ -122,20 +122,16 @@ namespace FixedPawnGenerate
             Scribe_Collections.Look(ref spawnedUniquePawns, "spawnedUniquePawns", LookMode.Def);
 
             //null list check
-            if (Scribe.mode == LoadSaveMode.LoadingVars && spawnedPawns == null)
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
-                spawnedPawns = new Dictionary<Pawn, FixedPawnDef>();
-                spawnedPawns.Clear();
-            }
-            if (Scribe.mode == LoadSaveMode.LoadingVars && pawnDics == null)
-            {
-                pawnDics = new Dictionary<string, FixedPawnDef>();
-                pawnDics.Clear();
-            }
-            if (Scribe.mode == LoadSaveMode.LoadingVars && spawnedUniquePawns == null)
-            {
-                spawnedUniquePawns = new List<FixedPawnDef>();
-                spawnedUniquePawns.Clear();
+                if (spawnedPawns == null)
+                    spawnedPawns = new Dictionary<Pawn, FixedPawnDef>();
+
+                if (pawnDics == null)
+                    pawnDics = new Dictionary<string, FixedPawnDef>();
+
+                if (spawnedUniquePawns == null)
+                    spawnedUniquePawns = new List<FixedPawnDef>();
             }
         }
 
@@ -165,11 +161,39 @@ namespace FixedPawnGenerate
             return spawnedPawns.FirstOrDefault(x => x.Value == def).Key;
         }
 
-        internal void AddPawn(Pawn pawn, FixedPawnDef def)
+        internal void AddPawn(Pawn pawn, FixedPawnDef def, bool forceAdd = false)
         {
+            if (pawn == null || def == null)
+            {
+                Log.Error($"[FixedPawnGenerate] Attempted to add pawn {pawn?.LabelShort ?? "null"} with fixedPawnDef {def?.defName ?? "null"}, forceAdd: {forceAdd}");
+                return;
+            }
+
             if (!spawnedPawns.ContainsKey(pawn))
             {
                 spawnedPawns.Add(pawn, def);
+
+                if (forceAdd)
+                {
+                    string defLabel = def.isUnique ? $"{def.defName}★" : def.defName;
+
+                    Log.Warning($"[FixedPawnGenerate] Assigned {defLabel} to {pawn.LabelShort}");
+                }
+            }
+            else if (forceAdd)
+            {
+                FixedPawnDef originalDef = spawnedPawns[pawn];
+                string originalDefLabel = originalDef.isUnique ? $"{originalDef.defName}★" : originalDef.defName;
+                string defLabel = def.isUnique ? $"{def.defName}★" : def.defName;
+
+                spawnedPawns[pawn] = def;
+
+                if (def.isUnique)
+                {
+                    spawnedUniquePawns.AddDistinct(def);
+                }
+
+                Log.Warning($"[FixedPawnGenerate] Reassigned {defLabel} to {pawn.LabelShort}, original def was {originalDefLabel}");
             }
         }
 
@@ -180,26 +204,24 @@ namespace FixedPawnGenerate
 
         public void LogPawnDics()
         {
-            String str = "============Spawned Pawns============\n" +
-                $"   {"Name",-30} {"Def",-10} {"Location",-25} {"ThingID",-15}\n";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("============Spawned Pawns============");
+            // 设定每列的固定宽度对齐
+            sb.AppendLine($"{"Name",-40} {"Def",-20} {"Location",-30} {"ThingID",-15}");
 
-            Pawn pawn = null;
-            FixedPawnDef def = null;
             int count = 0;
-
-
 
             foreach (var pair in spawnedPawns)
             {
-                pawn = pair.Key;
-                def = pair.Value;
+                Pawn pawn = pair.Key;
+                FixedPawnDef def = pair.Value;
 
                 string location = "Error";
 
                 switch (pawn.GetPawnPositionState())
                 {
                     case PawnPositionState.IN_MAP:
-                        location = $"Map[{pawn.Map.uniqueID.ToString()}]";
+                        location = $"Map[{pawn.Map.uniqueID}]";
                         break;
                     case PawnPositionState.WORLD_PAWN:
                         location = "World Pawn";
@@ -208,7 +230,7 @@ namespace FixedPawnGenerate
                         location = "In Container Enclosed";
                         break;
                     case PawnPositionState.IN_CORPSE:
-                        location = "In Corpse or Unnatural Corpse";
+                        location = "In Corpse/Unnatural";
                         break;
                     case PawnPositionState.IN_OTHER_HOLDER:
                         location = "In Unknown Holder";
@@ -221,26 +243,26 @@ namespace FixedPawnGenerate
                         break;
                     case PawnPositionState.ERROR:
                         break;
-                    default:
-                        break;
                 }
 
-                str += $"[{count++}]{pawn.Name,-30}\t{def.defName + (def.isUnique ? "★" : ""),-10}\t{location,-25}\t{pawn.ThingID,-15}\n";
+                // 将序号与名称合并后整体格式化，避免前缀导致的偏移
+                string nameField = $"[{count++}] {pawn.Name}";
+                string defField = def.defName + (def.isUnique ? "★" : "");
+
+                sb.AppendLine($"{nameField,-40} {defField,-20} {location,-30} {pawn.ThingID,-15}");
             }
 
-            str += "\n\n============Unique Pawns============\n";
+            sb.AppendLine();
+            sb.AppendLine("============Unique Pawns============");
             count = 0;
+
             foreach (var item in spawnedUniquePawns)
             {
-                str += $"[{count++}]{item.defName}:{item.name}, tags:";
-                foreach (var tag in item.tags)
-                {
-                    str += $"{tag},";
-                }
-                str += "\n";
+                string tagsStr = item.tags != null ? string.Join(", ", item.tags) : "None";
+                sb.AppendLine($"[{count++}] {item.defName}: {item.name}, tags: {tagsStr}");
             }
 
-            Log.Warning(str);
+            Log.Warning(sb.ToString());
         }
 
         internal bool IsSpawned(FixedPawnDef def)

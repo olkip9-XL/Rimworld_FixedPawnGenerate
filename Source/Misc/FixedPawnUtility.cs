@@ -327,6 +327,8 @@ namespace FixedPawnGenerate
                                 skill.passion = skillData.passion;
                         }
                     }
+
+                    pawn.workSettings.EnableAndInitialize();
                 }
 
                 //traits

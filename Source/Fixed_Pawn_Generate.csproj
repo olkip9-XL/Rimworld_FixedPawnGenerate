@@ -116,7 +116,7 @@
     <Compile Include="Harmony\FixedPawnHarmonyStartup.cs" />
     <Compile Include="Misc\FixedPawnUtility.cs" />
     <Compile Include="GameComponent\GameComponent_FixedPawn.cs" />
-    <Compile Include="Extensions\Listing_StandardExtentison.cs" />
+    <Compile Include="Extensions\Listing_StandardExtension.cs" />
     <Compile Include="Harmony\StartingPawnHarmony.cs" />
     <Compile Include="ModExtensions\ModExtension_ApparelExt.cs" />
     <Compile Include="ModExtensions\ModExtension_FixedPawnIncident.cs" />
