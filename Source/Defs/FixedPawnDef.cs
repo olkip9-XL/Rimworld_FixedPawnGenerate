@@ -360,6 +360,8 @@ public class FixedPawnDef : Def
 
     public List<AbilityDef> abilities = new List<AbilityDef>();
 
+    public List<GeneDef> forcedGenes = new List<GeneDef>();
+
     //Facial Animation
     [MayRequire("Nals.FacialAnimation")]
     public FPG_FacialAnimationProps facialAnimationProps = null;

@@ -406,6 +406,26 @@ namespace FixedPawnGenerate
                     }
                 }
 
+                //genes
+                if (!def.forcedGenes.NullOrEmpty() && ModsConfig.BiotechActive)
+                {
+                    foreach (var geneDef in def.forcedGenes)
+                    {
+                        Gene geneToAdd = pawn.genes.GetGene(geneDef);
+                        if (geneToAdd != null)
+                        {
+                            foreach (var gene in pawn.genes.GenesListForReading)
+                            {
+                                if (gene.def.endogeneCategory == geneDef.endogeneCategory)
+                                {
+                                    gene.overriddenByGene = geneToAdd;
+                                }
+                            }
+                            geneToAdd.overriddenByGene = null;
+                        }
+                    }
+                }
+
                 //FacialAnimation
                 def.facialAnimationProps?.SetPawn(pawn);
 
@@ -641,6 +661,7 @@ namespace FixedPawnGenerate
             curPawnDef.Value = def;
 
             //Log.Warning($"[Fixed Pawn Generate] =============== GUID: {guid}, def: {def?.defName ?? "null"}");
+            request.ValidateAndFix();
 
             return null;
         }
