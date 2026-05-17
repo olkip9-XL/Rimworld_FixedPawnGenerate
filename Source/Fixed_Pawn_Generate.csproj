@@ -133,6 +133,7 @@
     <Compile Include="RenderNode\PawnRenderNode_HairExt.cs" />
     <Compile Include="RenderNode\PawnRenderNode_SimplePawn.cs" />
     <Compile Include="ScenPart_ConfigPage_ConfigureStartingFixedPawns.cs" />
+    <Compile Include="TablePrinter.cs" />
     <Compile Include="ThoughtWorker\ThoughtWorker_PawnThoughtSocial.cs" />
     <Compile Include="ThoughtWorker\ThoughtWorker_PawnThoughtSocialGroup.cs" />
   </ItemGroup>

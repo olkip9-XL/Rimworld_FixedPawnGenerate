@@ -205,11 +205,55 @@ namespace FixedPawnGenerate
         public void LogPawnDics()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("============Spawned Pawns============");
-            // 设定每列的固定宽度对齐
-            sb.AppendLine($"{"Name",-40} {"Def",-20} {"Location",-30} {"ThingID",-15}");
+            //sb.AppendLine("============Spawned Pawns============");
+            //// 设定每列的固定宽度对齐
+            //sb.AppendLine($"{"Name",-40} {"Def",-20} {"Location",-30} {"ThingID",-15}");
 
             int count = 0;
+
+            //foreach (var pair in spawnedPawns)
+            //{
+            //    Pawn pawn = pair.Key;
+            //    FixedPawnDef def = pair.Value;
+
+            //    string location = "Error";
+
+            //    switch (pawn.GetPawnPositionState())
+            //    {
+            //        case PawnPositionState.IN_MAP:
+            //            location = $"Map[{pawn.Map.uniqueID}]";
+            //            break;
+            //        case PawnPositionState.WORLD_PAWN:
+            //            location = "World Pawn";
+            //            break;
+            //        case PawnPositionState.IN_CONTAINER:
+            //            location = "In Container Enclosed";
+            //            break;
+            //        case PawnPositionState.IN_CORPSE:
+            //            location = "In Corpse/Unnatural";
+            //            break;
+            //        case PawnPositionState.IN_OTHER_HOLDER:
+            //            location = "In Unknown Holder";
+            //            break;
+            //        case PawnPositionState.IN_CARAVAN:
+            //            location = "In Caravan";
+            //            break;
+            //        case PawnPositionState.OTHER:
+            //            location = "None";
+            //            break;
+            //        case PawnPositionState.ERROR:
+            //            break;
+            //    }
+
+            //    // 将序号与名称合并后整体格式化，避免前缀导致的偏移
+            //    string nameField = $"[{count++}] {pawn.Name}";
+            //    string defField = def.defName + (def.isUnique ? "★" : "");
+
+            //    sb.AppendLine($"{nameField,-40} {defField,-20} {location,-30} {pawn.ThingID,-15}");
+            //}
+
+
+            TablePrinter tp = new TablePrinter(new List<string> { "Name", "Def", "Location", "ThingID" });
 
             foreach (var pair in spawnedPawns)
             {
@@ -246,11 +290,12 @@ namespace FixedPawnGenerate
                 }
 
                 // 将序号与名称合并后整体格式化，避免前缀导致的偏移
-                string nameField = $"[{count++}] {pawn.Name}";
                 string defField = def.defName + (def.isUnique ? "★" : "");
 
-                sb.AppendLine($"{nameField,-40} {defField,-20} {location,-30} {pawn.ThingID,-15}");
+                tp.AddRow(new List<string> { pawn.Name.ToString(), defField, location, pawn.ThingID });
             }
+
+            sb.AppendLine(tp.ToString());
 
             sb.AppendLine();
             sb.AppendLine("============Unique Pawns============");
