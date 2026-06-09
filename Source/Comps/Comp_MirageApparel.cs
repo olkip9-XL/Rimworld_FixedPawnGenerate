@@ -90,4 +90,21 @@ public class Comp_MirageApparel : ThingComp
         }
         yield break;
     }
+
+    public void SetApparelStyle(Dictionary<ThingDef, ThingStyleDef> styleDefs)
+    {
+        if (cachedApparel == null)
+        {
+            InitializeApparel();
+        }
+
+        foreach (var apparel in cachedApparel)
+        {
+            if (styleDefs.TryGetValue(apparel.def, out ThingStyleDef styleDef))
+            {
+                apparel.StyleDef = styleDef;
+            }
+        }
+
+    }
 }

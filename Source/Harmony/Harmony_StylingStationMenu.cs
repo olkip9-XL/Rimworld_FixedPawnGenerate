@@ -39,6 +39,35 @@ internal static class Patch_Building_StylingStation_GetFloatMenuOptions
             yield return FloatMenuUtility.DecoratePrioritizedTask(option, selPawn, __instance, "ReservedBy", null);
         }
 
+        //switch apparel style
+        if (selPawn != null && selPawn.apparel != null && selPawn.TryGetComp<Comp_SwitchStyle>() is Comp_SwitchStyle comp)
+        {
+            //base style
+            FloatMenuOption baseOption = new FloatMenuOption("FPG_SwitchStyle".Translate("FPG_BaseStyle".Translate()), delegate ()
+            {
+                Job job = JobMaker.MakeJob(FPG_JobDefOf.FPG_SwitchStyle, __instance);
+                //借用这个count字段传递样式索引，-1代表基础样式
+                job.count = -1;
+                selPawn.jobs.TryTakeOrderedJob(job);
+            }, MenuOptionPriority.InitiateSocial);
+            yield return FloatMenuUtility.DecoratePrioritizedTask(baseOption, selPawn, __instance, "ReservedBy", null);
+
+            //alt styles
+            for (int i = 0; i < comp.Props.altStyles.Count; i++)
+            {
+                var style = comp.Props.altStyles[i];
+                int styleIndex = i; // local copy for closure
+
+                FloatMenuOption option = new FloatMenuOption("FPG_SwitchStyle".Translate(style.label), delegate ()
+                {
+                    Job job = JobMaker.MakeJob(FPG_JobDefOf.FPG_SwitchStyle, __instance);
+                    job.count = styleIndex;
+                    selPawn.jobs.TryTakeOrderedJob(job);
+                }, MenuOptionPriority.InitiateSocial);
+                yield return FloatMenuUtility.DecoratePrioritizedTask(option, selPawn, __instance, "ReservedBy", null);
+            }
+        }
+
         yield break;
     }
 

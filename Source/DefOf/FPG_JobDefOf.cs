@@ -12,4 +12,6 @@ namespace FixedPawnGenerate;
 internal static class FPG_JobDefOf
 {
     public static JobDef FPG_ToggleMirageApparel;
+
+    public static JobDef FPG_SwitchStyle;
 }

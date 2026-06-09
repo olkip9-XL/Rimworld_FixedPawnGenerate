@@ -47,6 +47,14 @@ namespace FixedPawnGenerate
 
         public string clipsPath;
 
+        public string overrideClipsPath { get; private set; }
+
+        public void SetOverrideClipsPath(string path)
+        {
+            overrideClipsPath = path;   
+            voiceDict.Clear();
+        }
+
         public SoundDef VoiceOfType(PawnVoiceType type)
         {
             if (voiceDict == null)
@@ -58,7 +66,7 @@ namespace FixedPawnGenerate
             {
                 List<SoundDef> list = new List<SoundDef>();
 
-                string resPath = $"{clipsPath}/{type}";
+                string resPath = overrideClipsPath.NullOrEmpty() ? $"{clipsPath}/{type}" : $"{overrideClipsPath}/{type}";
 
                 AudioGrain_Folder audioGrain = new AudioGrain_Folder();
                 audioGrain.clipFolderPath = resPath;

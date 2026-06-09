@@ -8,4 +8,11 @@
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
 
+  <JobDef>
+    <defName>FPG_SwitchStyle</defName>
+    <driverClass>FixedPawnGenerate.JobDriver_SwitchStyle</driverClass>
+    <reportString>switching style...</reportString>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
 </Defs>

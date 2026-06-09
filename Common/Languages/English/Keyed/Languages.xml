@@ -39,4 +39,7 @@
 
   <FPG_ToggleMirageApparel>Toggle mirage apparel</FPG_ToggleMirageApparel>
 
+  <FPG_SwitchStyle>Switch apparel style: {0}</FPG_SwitchStyle>
+  <FPG_BaseStyle>Normal</FPG_BaseStyle>
+
 </LanguageData>

@@ -125,7 +125,10 @@ namespace FixedPawnGenerate
     class AlterTachieData
     {
         public int alterTachieID = -1;
+
+        [LoadAlias("texture")]
         public string texturePath;
+
         public List<PortraitDiffData> stats = new List<PortraitDiffData>();
     }
 }

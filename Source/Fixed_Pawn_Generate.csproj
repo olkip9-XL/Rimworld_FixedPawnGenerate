@@ -69,10 +69,12 @@
   <ItemGroup>
     <Compile Include="AbilityComps\PawnVoice\CompAbilityEffect_PawnVoice.cs" />
     <Compile Include="AbilityComps\PawnVoice\CompProperties_AbilityPawnVoice.cs" />
+    <Compile Include="Comps\Props\CompProperties_SwitchStyle.cs" />
     <Compile Include="Comps\Props\CompProperties_OverrideBodyGraphic.cs" />
     <Compile Include="Comps\Props\CompProperties_MirageApparel.cs" />
     <Compile Include="Comps\Comp_MirageApparel.cs" />
     <Compile Include="Comps\Comp_OverrideBodyGraphic.cs" />
+    <Compile Include="Comps\Comp_SwitchStyle.cs" />
     <Compile Include="DefOf\FPG_JobDefOf.cs" />
     <Compile Include="Defs\CommsGachaConfigDef.cs" />
     <Compile Include="CommsGachaConfigWorker.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Harmony\Harmony_DrawBody.cs" />
     <Compile Include="Harmony\Harmony_HairGraphic.cs" />
     <Compile Include="Harmony\Harmony_MirageApparel.cs" />
+    <Compile Include="Harmony\Harmony_PawnStyleTracker.cs" />
     <Compile Include="Harmony\Harmony_StylingStationMenu.cs" />
     <Compile Include="Harmony\ModExtensionHarmony\ModExtHarmony_UniqueWeaponExt.cs" />
     <Compile Include="Harmony\Harmony_PawnVoice.cs" />
@@ -99,6 +102,7 @@
     <Compile Include="Incident\QuestNode\QuestNode_Root_FixedPawn_Arrival.cs" />
     <Compile Include="JobDriver\JobDriver_OpenGachaComms.cs" />
     <Compile Include="JobDriver\JobDriver_ToggleMirageApparel.cs" />
+    <Compile Include="JobDriver\JobDriver_SwitchStyle.cs" />
     <Compile Include="Misc\FPGPawnTextureUtility.cs" />
     <Compile Include="Misc\PawnRacepropUtility.cs" />
     <Compile Include="ModCompatible\Alienrace\Compact_HAR.cs" />

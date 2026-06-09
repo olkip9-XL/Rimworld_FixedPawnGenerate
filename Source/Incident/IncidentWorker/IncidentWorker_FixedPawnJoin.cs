@@ -55,10 +55,10 @@ namespace FixedPawnGenerate
             return base.CanSpawnJoiner(map);
         }
 
-        public override Pawn GeneratePawn()
+        public override Pawn GeneratePawn(Map map)
         {
             if (ModExt?.SatisfiedPawns == null || ModExt.SatisfiedPawns.Count == 0)
-                return base.GeneratePawn();
+                return base.GeneratePawn(map);
 
             FixedPawnDef def = ModExt.SatisfiedPawns.RandomElement();
             try
@@ -70,7 +70,7 @@ namespace FixedPawnGenerate
             catch (Exception e)
             {
                 Log.Error($"Error while generating fixed pawn in incident: {e}");
-                return base.GeneratePawn();
+                return base.GeneratePawn(map);
             }
         }
     }
