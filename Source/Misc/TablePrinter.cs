@@ -58,11 +58,6 @@ namespace FixedPawnGenerate
                 }
             }
 
-            foreach (var width in maxRowWidths)
-            {
-                Log.Warning($"Column width: {width}");
-            }
-
             //build header
             sb.Append(PadRight("", numberWidth));
             for (int i = 0; i < headers.Count; i++)

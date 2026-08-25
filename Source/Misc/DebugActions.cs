@@ -151,73 +151,7 @@ namespace FixedPawnGenerate
             return list;
         }
 
-
-        // Export local texture, for debug use
-        //[DebugAction("FixedPawnGenerate", "FPG: Export Local texture", false, false, false, false, false, 0, false, allowedGameStates = AllowedGameStates.PlayingOnMap)]
-        private static void ExportTexture()
-        {
-            List<string> paths = new List<string>()
-            {
-                "Things/Mote/PsychicLinkLine"
-            };
-
-            foreach (string path in paths)
-            {
-                ExportTexture(path);
-            }
-        }
-
-        private static void ExportTexture(string path)
-        {
-            Texture2D tex = ContentFinder<Texture2D>.Get(path);
-            if (tex == null)
-            {
-                Log.Error($"Texture not found: {path}");
-                return;
-            }
-            int width = tex.width;
-            int height = tex.height;
-            RenderTexture rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
-            RenderTexture.active = rt;
-            Graphics.Blit(tex, rt);
-            Texture2D tempTex = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
-            tempTex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-            tempTex.Apply();
-            RenderTexture.active = null;
-            //create dir
-            string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "RimworldTexture");
-            System.IO.Directory.CreateDirectory(folderPath);
-            byte[] bytes = tempTex.EncodeToPNG();
-            System.IO.File.WriteAllBytes(System.IO.Path.Combine(folderPath, $"{path.Replace("/", "_")}.png"), bytes);
-        }
-
-        private static void ExportTextureFolder(string folderPath)
-        {
-            foreach (var tex in ContentFinder<Texture2D>.GetAllInFolder(folderPath))
-            {
-                if (tex == null)
-                    continue;
-
-                int width = tex.width;
-                int height = tex.height;
-
-                RenderTexture rt = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32);
-
-                RenderTexture.active = rt;
-                Graphics.Blit(tex, rt);
-
-                Texture2D tempTex = new Texture2D(rt.width, rt.height, TextureFormat.ARGB32, false);
-                tempTex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-                tempTex.Apply();
-                RenderTexture.active = null;
-
-                //create dir
-                string exportDirectory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "RimworldTexture");
-                System.IO.Directory.CreateDirectory(exportDirectory);
-                byte[] bytes = tempTex.EncodeToPNG();
-                System.IO.File.WriteAllBytes(System.IO.Path.Combine(exportDirectory, $"{tex.name}.png"), bytes);
-            }
-        }
+        
 
     }
 }

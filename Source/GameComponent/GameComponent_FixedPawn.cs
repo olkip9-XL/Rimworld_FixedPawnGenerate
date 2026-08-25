@@ -109,9 +109,28 @@ namespace FixedPawnGenerate
             if (Scribe.mode == LoadSaveMode.Saving)
             {
                 pawnDics.Clear();
-                foreach (var pair in spawnedPawns)
+                try
                 {
-                    pawnDics.Add(pair.Key.ThingID, pair.Value);
+                    foreach (var pair in spawnedPawns)
+                    {
+                        if (pair.Key == null)
+                        {
+                            Log.Error($"[FixedPawnGenerate] ExposeData: spawnedPawns contains null key. Value: {pair.Value?.defName ?? "null"}");
+                            continue;
+                        }
+
+                        if (pair.Value == null)
+                        {
+                            Log.Error($"[FixedPawnGenerate] ExposeData: spawnedPawns contains null value. Key: {pair.Key?.LabelShort ?? "null"}");
+                            continue;
+                        }
+
+                        pawnDics.Add(pair.Key.ThingID, pair.Value);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"[FixedPawnGenerate] ExposeData: Error while constructing pawnDics from spawnedPawns. spawnedPawns count: {spawnedPawns.Count}, pawnDics count: {pawnDics.Count},\n {e}");
                 }
             }
 
@@ -124,14 +143,13 @@ namespace FixedPawnGenerate
             //null list check
             if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
-                if (spawnedPawns == null)
-                    spawnedPawns = new Dictionary<Pawn, FixedPawnDef>();
+                spawnedPawns ??= new Dictionary<Pawn, FixedPawnDef>();
 
-                if (pawnDics == null)
-                    pawnDics = new Dictionary<string, FixedPawnDef>();
+                pawnDics ??= new Dictionary<string, FixedPawnDef>();
 
-                if (spawnedUniquePawns == null)
-                    spawnedUniquePawns = new List<FixedPawnDef>();
+                spawnedUniquePawns ??= new List<FixedPawnDef>();
+
+                spawnedPawns.RemoveAll(x => x.Key == null && x.Value == null);
             }
         }
 
@@ -205,53 +223,9 @@ namespace FixedPawnGenerate
         public void LogPawnDics()
         {
             StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("============Spawned Pawns============");
-            //// 设定每列的固定宽度对齐
-            //sb.AppendLine($"{"Name",-40} {"Def",-20} {"Location",-30} {"ThingID",-15}");
+            sb.AppendLine("============Spawned Pawns============");
 
             int count = 0;
-
-            //foreach (var pair in spawnedPawns)
-            //{
-            //    Pawn pawn = pair.Key;
-            //    FixedPawnDef def = pair.Value;
-
-            //    string location = "Error";
-
-            //    switch (pawn.GetPawnPositionState())
-            //    {
-            //        case PawnPositionState.IN_MAP:
-            //            location = $"Map[{pawn.Map.uniqueID}]";
-            //            break;
-            //        case PawnPositionState.WORLD_PAWN:
-            //            location = "World Pawn";
-            //            break;
-            //        case PawnPositionState.IN_CONTAINER:
-            //            location = "In Container Enclosed";
-            //            break;
-            //        case PawnPositionState.IN_CORPSE:
-            //            location = "In Corpse/Unnatural";
-            //            break;
-            //        case PawnPositionState.IN_OTHER_HOLDER:
-            //            location = "In Unknown Holder";
-            //            break;
-            //        case PawnPositionState.IN_CARAVAN:
-            //            location = "In Caravan";
-            //            break;
-            //        case PawnPositionState.OTHER:
-            //            location = "None";
-            //            break;
-            //        case PawnPositionState.ERROR:
-            //            break;
-            //    }
-
-            //    // 将序号与名称合并后整体格式化，避免前缀导致的偏移
-            //    string nameField = $"[{count++}] {pawn.Name}";
-            //    string defField = def.defName + (def.isUnique ? "★" : "");
-
-            //    sb.AppendLine($"{nameField,-40} {defField,-20} {location,-30} {pawn.ThingID,-15}");
-            //}
-
 
             TablePrinter tp = new TablePrinter(new List<string> { "Name", "Def", "Location", "ThingID" });
 

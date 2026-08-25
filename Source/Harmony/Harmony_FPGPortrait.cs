@@ -7,7 +7,7 @@ using RimWorld;
 
 namespace FixedPawnGenerate
 {
-    public static class FPGPortraitHarmony
+    public static class Harmony_FPGPortrait
     {
 
         [HarmonyPatch(typeof(Dialog_InfoCard), "FillCard")]

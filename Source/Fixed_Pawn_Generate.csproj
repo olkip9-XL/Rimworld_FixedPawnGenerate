@@ -69,15 +69,23 @@
   <ItemGroup>
     <Compile Include="AbilityComps\PawnVoice\CompAbilityEffect_PawnVoice.cs" />
     <Compile Include="AbilityComps\PawnVoice\CompProperties_AbilityPawnVoice.cs" />
+    <Compile Include="Comps\Props\CompProperties_PawnFlight.cs" />
+    <Compile Include="Comps\Props\CompProperties_ProjectileTracker.cs" />
+    <Compile Include="Comps\Props\CompProperties_ShootEffect.cs" />
+    <Compile Include="Comps\Props\CompProperties_ThingTrail.cs" />
     <Compile Include="Comps\Props\CompProperties_SwitchStyle.cs" />
     <Compile Include="Comps\Props\CompProperties_OverrideBodyGraphic.cs" />
     <Compile Include="Comps\Props\CompProperties_MirageApparel.cs" />
     <Compile Include="Comps\Comp_MirageApparel.cs" />
     <Compile Include="Comps\Comp_OverrideBodyGraphic.cs" />
     <Compile Include="Comps\Comp_SwitchStyle.cs" />
+    <Compile Include="Comps\Comp_PawnFlight.cs" />
+    <Compile Include="Comps\Comp_ProjectileTracker.cs" />
+    <Compile Include="Comps\Comp_ShootEffect.cs" />
+    <Compile Include="Comps\Comp_ThingTrail.cs" />
     <Compile Include="DefOf\FPG_JobDefOf.cs" />
     <Compile Include="Defs\CommsGachaConfigDef.cs" />
-    <Compile Include="CommsGachaConfigWorker.cs" />
+    <Compile Include="Misc\CommsGachaConfigWorker.cs" />
     <Compile Include="Comps\Props\CompProperties_SimplePawn.cs" />
     <Compile Include="Comps\CompHediffAura.cs" />
     <Compile Include="Comps\CompPawnVoice.cs" />
@@ -92,6 +100,7 @@
     <Compile Include="Harmony\Harmony_DrawBody.cs" />
     <Compile Include="Harmony\Harmony_HairGraphic.cs" />
     <Compile Include="Harmony\Harmony_MirageApparel.cs" />
+    <Compile Include="Harmony\Harmony_PawnFlight.cs" />
     <Compile Include="Harmony\Harmony_PawnStyleTracker.cs" />
     <Compile Include="Harmony\Harmony_StylingStationMenu.cs" />
     <Compile Include="Harmony\ModExtensionHarmony\ModExtHarmony_UniqueWeaponExt.cs" />
@@ -106,10 +115,10 @@
     <Compile Include="Misc\FPGPawnTextureUtility.cs" />
     <Compile Include="Misc\PawnRacepropUtility.cs" />
     <Compile Include="ModCompatible\Alienrace\Compact_HAR.cs" />
-    <Compile Include="Harmony\FPGPortraitHarmony.cs" />
+    <Compile Include="Harmony\Harmony_FPGPortrait.cs" />
     <Compile Include="Comps\Props\CompProperties_Tachie.cs" />
     <Compile Include="Comps\CompTachie.cs" />
-    <Compile Include="DebugActions.cs" />
+    <Compile Include="Misc\DebugActions.cs" />
     <Compile Include="ModCompatible\Alienrace\FPG_AlienraceAddonProps.cs" />
     <Compile Include="ModCompatible\Compact_CombatExtended.cs" />
     <Compile Include="ModCompatible\Compact_FacialAnimation.cs" />
@@ -121,7 +130,7 @@
     <Compile Include="Misc\FixedPawnUtility.cs" />
     <Compile Include="GameComponent\GameComponent_FixedPawn.cs" />
     <Compile Include="Extensions\Listing_StandardExtension.cs" />
-    <Compile Include="Harmony\StartingPawnHarmony.cs" />
+    <Compile Include="Harmony\Harmony_StartingPawn.cs" />
     <Compile Include="ModExtensions\ModExtension_ApparelExt.cs" />
     <Compile Include="ModExtensions\ModExtension_FixedPawnIncident.cs" />
     <Compile Include="ModExtensions\ModExtension_HairExt.cs" />
@@ -129,15 +138,18 @@
     <Compile Include="ModExtensions\ModExtension_PawnThoughtSocialGroup.cs" />
     <Compile Include="ModExtensions\ModExtension_UniqueWeaponExt.cs" />
     <Compile Include="ModExtensions\ModExtension_OpenCommsJob.cs" />
-    <Compile Include="ModSettings.cs" />
-    <Compile Include="PawnGenerateWorker.cs" />
+    <Compile Include="Misc\ModSettings.cs" />
+    <Compile Include="Misc\PawnGenerateWorker.cs" />
+    <Compile Include="ModExtensions\ModExtension_ThingTracker.cs" />
+    <Compile Include="Thing\MoteThrownWithTracker.cs" />
+    <Compile Include="Thing\ProjectileTracker.cs" />
     <Compile Include="RenderNode\PawnRenderNode_Apparel_Extra.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderNode\PawnRenderNode_ApparelExt.cs" />
     <Compile Include="RenderNode\PawnRenderNode_HairExt.cs" />
     <Compile Include="RenderNode\PawnRenderNode_SimplePawn.cs" />
-    <Compile Include="ScenPart_ConfigPage_ConfigureStartingFixedPawns.cs" />
-    <Compile Include="TablePrinter.cs" />
+    <Compile Include="Misc\ScenPart_ConfigPage_ConfigureStartingFixedPawns.cs" />
+    <Compile Include="Misc\TablePrinter.cs" />
     <Compile Include="ThoughtWorker\ThoughtWorker_PawnThoughtSocial.cs" />
     <Compile Include="ThoughtWorker\ThoughtWorker_PawnThoughtSocialGroup.cs" />
   </ItemGroup>

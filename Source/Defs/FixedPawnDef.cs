@@ -462,4 +462,17 @@ public class FixedPawnDef : Def
         return copy;
     }
 
+    public override void PostLoad()
+    {
+        base.PostLoad();
+
+        if (!this.comps.NullOrEmpty())
+        {
+            foreach (var comp in this.comps)
+            {
+                comp.PostLoadSpecial(race);
+            }
+        }
+    }
+
 }
