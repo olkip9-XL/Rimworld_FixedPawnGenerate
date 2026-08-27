@@ -19,37 +19,12 @@ namespace FixedPawnGenerate
         private const float width = 0.6f;
         private Vector3 lastPos = Vector3.zero;
 
-        //private Pawn Pawn => parent as Pawn;
-
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             base.PostSpawnSetup(respawningAfterLoad);
 
-            if (Props.trailTexturePath.NullOrEmpty())
-            {
-                Log.Error($"Comp_PawnTrail on {parent} has no trailTexturePath set.");
-                return;
-            }
-
-            trailMesh = new Mesh();
-            Shader shader = Props.shaderType?.Shader ?? ShaderDatabase.Transparent;
-
-            Texture2D texture = ContentFinder<Texture2D>.Get(Props.trailTexturePath, true);
-            MaterialRequest request = new MaterialRequest();
-            request.mainTex = texture;
-            request.shaderParameters = Props.shaderParameters ?? new List<ShaderParameter>();
-            request.shader = shader;
-            request.color = Props.color;
-
-            trailMat = MaterialPool.MatFrom(request);
-
             if (!respawningAfterLoad)
                 active = Props.defaultActive;
-        }
-
-        public override void CompTick()
-        {
-            if (parent == null || !parent.Spawned) return;
         }
 
         private void SampleCurrent()
@@ -88,6 +63,15 @@ namespace FixedPawnGenerate
             SampleCurrent();
 
             if (samples.Count < 2) return;
+
+            if (trailMesh == null)
+            {
+                trailMesh = new Mesh();
+            }
+            if (trailMat == null)
+            {
+                InitializeMaterial();
+            }
 
             // 构建顶点（两顶点/样本），uv, color, idx
             int n = samples.Count;
@@ -170,9 +154,27 @@ namespace FixedPawnGenerate
             GenDraw.DrawMeshNowOrLater(trailMesh, Vector3.zero, Quaternion.identity, trailMat, drawNow: false);
         }
 
+        private void InitializeMaterial()
+        {
+            Shader shader = Props.shaderType?.Shader ?? ShaderDatabase.Transparent;
+            MaterialRequest request = new MaterialRequest();
+            request.mainTex = Props.trailTexture;
+            request.shaderParameters = Props.shaderParameters ?? new List<ShaderParameter>();
+            request.shader = shader;
+            request.color = Props.color;
+            trailMat = MaterialPool.MatFrom(request);
+        }
+
+
         public override void PostExposeData()
         {
             Scribe_Values.Look(ref active, "active", true);
+
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                if (samples == null)
+                    samples = new List<Sample>();
+            }
         }
 
         public Mesh TrailMesh => trailMesh;

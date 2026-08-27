@@ -54,8 +54,12 @@ internal class ProjectileTracker : ThingWithComps
         {
             lifetimeTicksLeft--;
         }
+
         //track the projectile
-        this.Position = projectile.Position;
+        if (projectile != null && projectile.Spawned)
+        {
+            this.Position = projectile.Position;
+        }
     }
 
     public void SetProjectile(Thing projectile)
