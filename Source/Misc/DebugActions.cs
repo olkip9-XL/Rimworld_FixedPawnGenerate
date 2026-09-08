@@ -151,7 +151,27 @@ namespace FixedPawnGenerate
             return list;
         }
 
-        
 
+        [DebugAction("FixedPawnGenerate", "FPG: Apply TransformDef", false, false, false, false, false, 0, false, actionType = DebugActionType.ToolMap, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static List<DebugActionNode> ApplyTransformDef()
+        {
+            List<DebugActionNode> list = new List<DebugActionNode>();
+            foreach (var def in DefDatabase<TransformDef>.AllDefs)
+            {
+                DebugActionNode node = new DebugActionNode(def.defName, DebugActionType.ToolMap, delegate
+                {
+                    Pawn pawn = Find.CurrentMap.thingGrid.ThingsAt(UI.MouseCell()).OfType<Pawn>().FirstOrDefault();
+                    if (pawn != null)
+                    {
+                        def.Apply(pawn);
+                        Messages.Message($"Applied {def.defName} to {pawn.LabelShort}", MessageTypeDefOf.NeutralEvent);
+                    }
+                });
+
+                list.Add(node);
+            }
+
+            return list;
+        }
     }
 }

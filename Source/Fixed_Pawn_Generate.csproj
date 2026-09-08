@@ -67,8 +67,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbilityComps\PawnVoice\CompAbilityEffect_PawnVoice.cs" />
-    <Compile Include="AbilityComps\PawnVoice\CompProperties_AbilityPawnVoice.cs" />
+    <Compile Include="Comps\AbilityComps\pawnvoice\CompAbilityEffect_PawnVoice.cs" />
+    <Compile Include="Comps\AbilityComps\pawnvoice\CompProperties_AbilityPawnVoice.cs" />
+    <Compile Include="Comps\HediffComps\HediffComp_PawnFlight.cs" />
+    <Compile Include="Comps\Props\CompProperties_OverrideShader.cs" />
     <Compile Include="Comps\Props\CompProperties_PawnFlight.cs" />
     <Compile Include="Comps\Props\CompProperties_ProjectileTracker.cs" />
     <Compile Include="Comps\Props\CompProperties_ShootEffect.cs" />
@@ -83,8 +85,12 @@
     <Compile Include="Comps\Comp_ProjectileTracker.cs" />
     <Compile Include="Comps\Comp_ShootEffect.cs" />
     <Compile Include="Comps\Comp_ThingTrail.cs" />
+    <Compile Include="Comps\Comp_OverrideShader.cs" />
     <Compile Include="DefOf\FPG_JobDefOf.cs" />
     <Compile Include="Defs\CommsGachaConfigDef.cs" />
+    <Compile Include="Harmony\Harmony_OverrideShader.cs" />
+    <Compile Include="Comps\HediffComps\HediffCompProperties_PawnFlight.cs" />
+    <Compile Include="Misc\CommsGachaConfigWorker_All.cs" />
     <Compile Include="Misc\CommsGachaConfigWorker.cs" />
     <Compile Include="Comps\Props\CompProperties_SimplePawn.cs" />
     <Compile Include="Comps\CompHediffAura.cs" />
@@ -152,6 +158,11 @@
     <Compile Include="Misc\TablePrinter.cs" />
     <Compile Include="ThoughtWorker\ThoughtWorker_PawnThoughtSocial.cs" />
     <Compile Include="ThoughtWorker\ThoughtWorker_PawnThoughtSocialGroup.cs" />
+    <Compile Include="Defs\TransformDef.cs" />
+    <Compile Include="TransformWorker\TransformWorker.cs" />
+    <Compile Include="TransformWorker\TransformWorker_Items.cs" />
+    <Compile Include="TransformWorker\TransformWorker_Shader.cs" />
+    <Compile Include="TransformWorker\TransformWorker_Style.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

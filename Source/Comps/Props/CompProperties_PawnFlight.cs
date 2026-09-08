@@ -26,10 +26,10 @@ public class CompProperties_PawnFlight : CompProperties
     public FloatRange blurAlpha = new FloatRange(0.5f, 1f);
 
     [NoTranslate]
-    public string takeOffIconPath = "UI/Icon/TakeOff";
+    private string takeOffIconPath = "UI/Icon/TakeOff";
 
     [NoTranslate]
-    public string landIconPath = "UI/Icon/Land";
+    private string landIconPath = "UI/Icon/Land";
 
     public Texture2D takeOffIcon;
 
@@ -43,9 +43,17 @@ public class CompProperties_PawnFlight : CompProperties
 
     public string landDesc = "LandDesc";
 
-    public bool showButton = true;
+    public bool showGizmo = true;
 
     public HediffDef flyingHediff;
+
+    public float maxFlightTime = 9999f;
+
+    public EffecterDef flyingEffecter;
+
+    public float flyingEffecterSpawnRadius = 1f;
+
+    public int flyingEffecterSpawnInterval = 10;
 
     public override void PostLoadSpecial(ThingDef parent)
     {

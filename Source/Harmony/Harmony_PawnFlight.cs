@@ -16,9 +16,18 @@ internal static class Harmony_PawnFlight
     static bool Prefix(Pawn_FlightTracker __instance)
     {
         Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
-        if(pawn != null && pawn.HasComp<Comp_PawnFlight>())
+
+        if (pawn != null)
         {
-            return false; 
+            if (pawn.HasComp<Comp_PawnFlight>())
+            {
+                return false;
+            }
+
+            if (pawn.health?.hediffSet?.GetHediffComps<HediffComp_PawnFlight>().Any() == true)
+            {
+                return false;
+            }
         }
 
         return true;

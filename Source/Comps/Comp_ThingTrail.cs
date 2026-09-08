@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using RimWorld;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
+using Verse.Sound;
 
 namespace FixedPawnGenerate
 {
@@ -25,6 +27,32 @@ namespace FixedPawnGenerate
 
             if (!respawningAfterLoad)
                 active = Props.defaultActive;
+        }
+
+        public override void CompTick()
+        {
+            base.CompTick();
+
+            //在路径上绘制Fleck
+            if (active && !samples.NullOrEmpty() && Props.trailFleck != null && Props.trailFleckChanceCurve != null)
+            {
+                int sampleCount = samples.Count;
+                for (int i = 0; i < sampleCount; i++)
+                {
+                    Sample sample = samples[i];
+                    float t = 1 - (i / (float)(sampleCount - 1));
+
+                    if (Rand.Chance(Props.trailFleckChanceCurve.Evaluate(t)))
+                    {
+                        float width = Props.widthCurve?.Evaluate(t) ?? 1f;
+                        width /= 2f;
+
+                        Vector3 spawnPos = new Vector3(sample.pos.x + Rand.Range(-width, width), sample.pos.y, sample.pos.z + Rand.Range(-width, width));
+
+                        FleckMaker.Static(spawnPos, parent.Map, Props.trailFleck, 1f);
+                    }
+                }
+            }
         }
 
         private void SampleCurrent()
@@ -149,8 +177,6 @@ namespace FixedPawnGenerate
             trailMesh.RecalculateBounds();
 
             // 绘制；在 RimWorld 中使用正确的坐标系和渲染通道
-            //Graphics.DrawMesh(trailMesh, Matrix4x4.identity, trailMat, 0);
-
             GenDraw.DrawMeshNowOrLater(trailMesh, Vector3.zero, Quaternion.identity, trailMat, drawNow: false);
         }
 
@@ -164,7 +190,6 @@ namespace FixedPawnGenerate
             request.color = Props.color;
             trailMat = MaterialPool.MatFrom(request);
         }
-
 
         public override void PostExposeData()
         {

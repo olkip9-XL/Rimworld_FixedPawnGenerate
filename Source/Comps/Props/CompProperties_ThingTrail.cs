@@ -38,6 +38,10 @@ internal class CompProperties_ThingTrail : CompProperties
 
     public int samplesPerTick = 1;
 
+    public FleckDef trailFleck;
+
+    public SimpleCurve trailFleckChanceCurve;
+
     public override IEnumerable<string> ConfigErrors(ThingDef parentDef)
     {
         foreach (var error in base.ConfigErrors(parentDef))

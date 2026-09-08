@@ -12,15 +12,14 @@ namespace FixedPawnGenerate;
 
 internal static class Harmony_OverrideShader
 {
-    private static void TryEditMaterial(ShaderPart part, PawnRenderNode node, PawnDrawParms parms, ref Material material)
+    private static void TryEditMaterial(PawnRenderNode node, ref Material material)
     {
-        if (material == null)
-        {
-            return;
-        }
+        TryEditMaterial(node?.Props?.debugLabel, node?.tree?.pawn, ref material);
+    }
 
-        Pawn pawn = node?.tree?.pawn;
-        if(pawn == null)
+    private static void TryEditMaterial(string nodeLabel, Pawn pawn, ref Material material)
+    {
+        if (material == null || nodeLabel == null || pawn == null)
         {
             return;
         }
@@ -31,17 +30,21 @@ internal static class Harmony_OverrideShader
             return;
         }
 
-        comp.EditMaterial(part, node, parms, ref material);
+        Material material2 = comp.EditMaterial(nodeLabel, ref material);
+        if (material2 != null)
+        {
+            material = material2;
+        }
     }
 
 
-    //Hair
+    //Base
     [HarmonyPatch(typeof(PawnRenderNodeWorker), "GetMaterial")]
     static class Patch_PawnRenderNodeWorker_GetMaterial
     {
         static void Postfix(PawnRenderNode node, PawnDrawParms parms, ref Material __result)
         {
-           TryEditMaterial(ShaderPart.Hair, node, parms, ref __result);
+            TryEditMaterial(node, ref __result);
         }
     }
 

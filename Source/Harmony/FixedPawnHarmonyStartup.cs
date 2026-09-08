@@ -89,7 +89,8 @@ namespace FixedPawnGenerate
             //测试
             List<string> paths = new List<string>()
             {
-               "Things/Mote/SparkThrownBlue",
+               "Things/Building/Childcare/ToyBox",
+               "Things/Building/Childcare/ToyBox_m",
             };
 
             List<string> folderPaths = new List<string>()

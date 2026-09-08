@@ -8,14 +8,6 @@ using Verse;
 
 namespace FixedPawnGenerate;
 
-enum ShaderPart
-{
-    None,
-    Apparel,
-    Body,
-    Hair,
-}
-
 internal class CompProperties_OverrideShader : CompProperties
 {
     public CompProperties_OverrideShader()
@@ -23,7 +15,4 @@ internal class CompProperties_OverrideShader : CompProperties
         this.compClass = typeof(Comp_OverrideShader);
     }
 
-    public ShaderTypeDef testShader;
-
-    public List<ShaderParameter> testShaderParameters = new List<ShaderParameter>();
 }

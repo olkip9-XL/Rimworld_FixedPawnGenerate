@@ -26,9 +26,14 @@ public class Comp_PawnFlight : ThingComp
 
     public bool IsFlying => Pawn.flight?.Flying == true;
 
+    //public bool IsMoving => (Pawn.DrawPos - lastSpawnPos).MagnitudeHorizontal() >= 0.03f;
+    public bool IsMoving => Pawn.pather.MovingNow;
+
     private Vector3 lastSpawnPos;
 
     private int ticksSinceLastSample;
+
+    private int ticksSinceLastFlyingEffecter;
 
     private Queue<Sample> samples = new Queue<Sample>();
 
@@ -42,6 +47,45 @@ public class Comp_PawnFlight : ThingComp
     }
 
     public override void CompTick()
+    {
+        SampleTick();
+
+        EffecterTick();
+    }
+
+    private void EffecterTick()
+    {
+        if (!IsFlying || !IsMoving || Props.flyingEffecter == null)
+        {
+            return;
+        }
+
+        if (ticksSinceLastFlyingEffecter < Props.flyingEffecterSpawnInterval)
+        {
+            ticksSinceLastFlyingEffecter++;
+            return;
+        }
+        else
+        {
+            ticksSinceLastFlyingEffecter = 0;
+            TriggerFlyingEffecter();
+        }
+    }
+
+    protected virtual void TriggerFlyingEffecter()
+    {
+        if (Props.flyingEffecter == null)
+            return;
+
+        Vector3 offset = new Vector3(Rand.Range(-Props.flyingEffecterSpawnRadius, Props.flyingEffecterSpawnRadius), 0f, Rand.Range(-Props.flyingEffecterSpawnRadius, Props.flyingEffecterSpawnRadius));
+
+        Effecter effecter = Props.flyingEffecter.Spawn();
+        effecter.offset = offset;
+        effecter.Trigger(Pawn, Pawn);
+        effecter.Cleanup();
+    }
+
+    private void SampleTick()
     {
         if (!IsFlying)
         {
@@ -58,7 +102,7 @@ public class Comp_PawnFlight : ThingComp
         Vector3 curPos = Pawn.DrawPos;
         if (lastSpawnPos == Vector3.zero) lastSpawnPos = curPos;
 
-        if ((curPos - lastSpawnPos).MagnitudeHorizontal() >= 0.03f)
+        if (IsMoving)
         {
             if (GlobalTextureAtlasManager.TryGetPawnFrameSet(Pawn, out var frameSet, out var _))
             {
@@ -86,6 +130,7 @@ public class Comp_PawnFlight : ThingComp
         }
     }
 
+
     public override void PostDraw()
     {
         if (!IsFlying)
@@ -94,29 +139,19 @@ public class Comp_PawnFlight : ThingComp
         if (samples.Count == 0)
             return;
 
-        int i = 1;
-        foreach (var sample in samples)
+        foreach (var i in Enumerable.Range(0, samples.Count))
         {
+            Sample sample = samples.ElementAt(i);
+
             if (GlobalTextureAtlasManager.TryGetPawnFrameSet(Pawn, out var frameSet, out var _))
             {
                 using (new ProfilerBlock("Draw flight blur"))
                 {
                     float alpha = Mathf.Lerp(Props.blurAlpha.min, Props.blurAlpha.max, (float)i / (samples.Count + 1)); // Adjust the alpha based on the sample index
-
-                    Rot4 facing = sample.rot;
-                    Vector3 bodyPos = sample.pos;
-                    float bodyAngle = 0f;
-                    PawnDrawMode drawMode = PawnDrawMode.BodyAndHead;
-                    Material mat = MaterialPool.MatFrom(new MaterialRequest(frameSet.atlas, ShaderDatabase.Cutout));
-                    mat = FadedMaterialPool.FadedVersionOf(mat, alpha); // Set the transparency of the residual image
-                    GenDraw.DrawMeshNowOrLater(GetBlitMeshUpdatedFrame(frameSet, facing, drawMode), bodyPos, Quaternion.AngleAxis(bodyAngle, Vector3.up), mat, drawNow: false);
-
-                    //test
-                    //Graphics.DrawMesh(MeshPool.plane10, Matrix4x4.TRS(sample.pos, Quaternion.identity, Vector3.one), Pawn.Drawer.renderer.SilhouetteGraphic.MatSingle, 0);
+                    Material mat = FadedMaterialPool.FadedVersionOf(sample.mat, alpha);
+                    GenDraw.DrawMeshNowOrLater(GetBlitMeshUpdatedFrame(frameSet, sample.rot, PawnDrawMode.BodyAndHead), sample.pos, Quaternion.AngleAxis(0f, Vector3.up), mat, drawNow: false);
                 }
             }
-
-            i++;
         }
 
         Mesh GetBlitMeshUpdatedFrame(PawnTextureAtlasFrameSet frameSet, Rot4 rotation, PawnDrawMode drawMode)
@@ -136,7 +171,7 @@ public class Comp_PawnFlight : ThingComp
 
     public override IEnumerable<Gizmo> CompGetGizmosExtra()
     {
-        if (!Props.showButton)
+        if (!Props.showGizmo)
             yield break;
 
         yield return new Command_Toggle
@@ -201,7 +236,7 @@ public class Comp_PawnFlight : ThingComp
     {
         if (stat == StatDefOf.MaxFlightTime)
         {
-            return 9999f; // Set a very high value for max flight time
+            return Props.maxFlightTime; // Set a very high value for max flight time
         }
         return base.GetStatOffset(stat);
     }
