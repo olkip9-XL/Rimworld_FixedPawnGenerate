@@ -8,13 +8,34 @@ using Verse;
 
 namespace FixedPawnGenerate;
 
-internal class CompProperties_ThingTrail : CompProperties
+public class CompProperties_ThingTrail : CompProperties
 {
     public CompProperties_ThingTrail()
     {
         this.compClass = typeof(Comp_ThingTrail);
     }
 
+    public CompProperties_ThingTrail(ModExtension_ThingTrail modExtension)
+    {
+        this.compClass = typeof(Comp_ThingTrail);
+
+        //分配ModExtension_ThingTrail中的属性值到CompProperties_ThingTrail中
+        this.trailTexturePath = modExtension.trailTexturePath;
+        this.shaderType = modExtension.shaderType;
+        this.shaderParameters = modExtension.shaderParameters;
+        this.widthCurve = modExtension.widthCurve;
+        this.transparencyCurve = modExtension.transparencyCurve;
+        this.color = modExtension.color;
+        this.altitudeLayer = modExtension.altitudeLayer;
+        this.altitudeOffset = modExtension.altitudeOffset;
+        this.lifeTimeTicks = modExtension.lifeTimeTicks;
+        this.defaultActive = modExtension.defaultActive;
+        this.samplesPerTick = modExtension.samplesPerTick;
+        this.trailFleck = modExtension.trailFleck;
+        this.trailFleckChanceCurve = modExtension.trailFleckChanceCurve;
+    }
+
+    [NoTranslate]
     private string trailTexturePath;// 材质路径
 
     public Texture2D trailTexture;
@@ -60,6 +81,7 @@ internal class CompProperties_ThingTrail : CompProperties
             yield return "trailTexturePath must be set.";
         }
     }
+
 
     public override void PostLoadSpecial(ThingDef parent)
     {

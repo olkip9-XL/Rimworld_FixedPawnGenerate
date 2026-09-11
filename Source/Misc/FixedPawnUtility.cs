@@ -35,9 +35,11 @@ namespace FixedPawnGenerate
             {
                 return curPawnDef.Value;
             }
+            set
+            {
+                curPawnDef.Value = value;
+            }
         }
-
-
 
         static FixedPawnUtility()
         {

@@ -90,6 +90,7 @@
     <Compile Include="Defs\CommsGachaConfigDef.cs" />
     <Compile Include="Harmony\Harmony_OverrideShader.cs" />
     <Compile Include="Comps\HediffComps\HediffCompProperties_PawnFlight.cs" />
+    <Compile Include="Harmony\Harmony_PawnDuplicator.cs" />
     <Compile Include="Misc\CommsGachaConfigWorker_All.cs" />
     <Compile Include="Misc\CommsGachaConfigWorker.cs" />
     <Compile Include="Comps\Props\CompProperties_SimplePawn.cs" />
@@ -147,6 +148,9 @@
     <Compile Include="Misc\ModSettings.cs" />
     <Compile Include="Misc\PawnGenerateWorker.cs" />
     <Compile Include="ModExtensions\ModExtension_ThingTracker.cs" />
+    <Compile Include="ModExtensions\ModExtension_ThingTrail.cs" />
+    <Compile Include="Misc\StartUp\ModStartUp.cs" />
+    <Compile Include="Misc\StartUp\ThingTrailMaker.cs" />
     <Compile Include="Thing\MoteThrownWithTracker.cs" />
     <Compile Include="Thing\ProjectileTracker.cs" />
     <Compile Include="RenderNode\PawnRenderNode_Apparel_Extra.cs" />

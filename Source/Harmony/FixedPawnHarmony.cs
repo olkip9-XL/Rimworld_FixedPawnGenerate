@@ -36,7 +36,7 @@ public static class FixedPawnHarmony
     //    //curPawnDef.Value = null;
     //    return def;
     //}
-
+  
 
     private static bool CallerInBlackList(string caller)
     {
@@ -249,53 +249,6 @@ public static class FixedPawnHarmony
             catch (Exception e)
             {
                 Log.Error($"[FixedPawnGenerate] InitializeComps error. Thing:{__instance?.ThingID ?? "null"}, Exception:{e}");
-            }
-        }
-    }
-
-    //Anomaly Duplicate
-    [HarmonyPatch(typeof(GameComponent_PawnDuplicator), "Duplicate")]
-    public static class PawnDuplicatePatch
-    {
-        //copy comps
-        public static void Prefix(Pawn pawn)
-        {
-
-            if (pawn == null)
-            {
-                Log.Warning("Pawn is null when Duplicating(Prefix) Pawn");
-                return;
-            }
-
-            FixedPawnDef def = pawn.GetFixedPawnDef();
-            if (def != null)
-            {
-#if DEBUG
-                Log.Warning($"[Debug]Pawn复制：{pawn.Name}");
-#endif
-
-                //compProperties.AddRange(def.comps);
-            }
-        }
-
-        public static void Postfix(Pawn pawn, Pawn __result)
-        {
-            if (pawn == null || __result == null)
-            {
-                Log.Warning("Pawn or __result is null when Duplicating(Postfix) Pawn");
-
-                //if (compProperties.Any())
-                //{
-                //    Log.Warning("compProperties is not empty when Duplicating Pawn");
-                //    compProperties.Clear();
-                //}
-                return;
-            }
-
-            FixedPawnDef def = pawn.GetFixedPawnDef();
-            if (def != null && __result.GetFixedPawnDef() == null)
-            {
-                FixedPawnUtility.Manager.AddPawn(__result, def);
             }
         }
     }
