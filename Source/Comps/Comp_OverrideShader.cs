@@ -33,7 +33,7 @@ internal class Comp_OverrideShader : ThingComp, IThingHolder
     private TransformDef activeTransform;
     private int transformStartTick = -1;
 
-    private ThingOwner<ThingWithComps> thingOwner = new ThingOwner<ThingWithComps>();
+    private ThingOwner<ThingWithComps> innerContainer = new ThingOwner<ThingWithComps>();
 
     public void StartTransform(TransformDef transformDef)
     {
@@ -132,28 +132,6 @@ internal class Comp_OverrideShader : ThingComp, IThingHolder
         {
             MarkPawnGraphicsDirty();
         }
-    }
-
-    public override IEnumerable<Gizmo> CompGetGizmosExtra()
-    {
-        foreach (Gizmo gizmo in base.CompGetGizmosExtra())
-        {
-            yield return gizmo;
-        }
-
-        //yield return new Command_Toggle
-        //{
-        //    defaultLabel = "Toggle Shader Override",
-        //    defaultDesc = "Toggle the shader override on or off.",
-        //    isActive = () => debugActive,
-        //    toggleAction = () =>
-        //    {
-        //        if (debugActive)
-        //        {
-        //            StopTransform();
-        //        }
-        //    }
-        //};
     }
 
     public override void PostDestroy(DestroyMode mode, Map previousMap)
@@ -374,7 +352,7 @@ internal class Comp_OverrideShader : ThingComp, IThingHolder
             pawn.Drawer?.renderer?.SetAllGraphicsDirty();
         }
     }
-
+     
     public void GetChildHolders(List<IThingHolder> outChildren)
     {
         ThingOwnerUtility.AppendThingHoldersFromThings(outChildren, GetDirectlyHeldThings());
@@ -382,14 +360,14 @@ internal class Comp_OverrideShader : ThingComp, IThingHolder
 
     public ThingOwner GetDirectlyHeldThings()
     {
-        return thingOwner;
+        return innerContainer;
     }
 
     public override void PostExposeData()
     {
         base.PostExposeData();
 
-        Scribe_Deep.Look(ref thingOwner, "thingOwner", this);
+        Scribe_Deep.Look(ref innerContainer, "Comp_OverrideShader.innerContainer");
     }
 }
 

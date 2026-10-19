@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +18,10 @@ public class ModExtension_ThingTrail : DefModExtension
     public List<ShaderParameter> shaderParameters;
 
     public SimpleCurve widthCurve;
+
+    public float width = 0.6f;
+
+    public bool taperByLength = false;
 
     public SimpleCurve transparencyCurve;
 
@@ -39,3 +43,4 @@ public class ModExtension_ThingTrail : DefModExtension
 
 
 }
+

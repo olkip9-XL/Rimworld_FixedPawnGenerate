@@ -1,8 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
@@ -10,56 +5,47 @@ namespace FixedPawnGenerate;
 
 internal class ProjectileTracker : ThingWithComps
 {
-
-    private bool ProjectileDestroyed
-    {
-        get
-        {
-            return projectile == null || projectile.Destroyed || !projectile.Spawned;
-        }
-
-    }
-    public override Vector3 DrawPos => projectile?.DrawPos ?? base.DrawPos;
-
-
     private Thing projectile;
-
     private int lifetimeTicksLeft;
+    private Vector3 lastDrawPos;
+    private bool hasLastDrawPos;
+    public bool IsTracking => projectile != null && !projectile.Destroyed && projectile.Spawned;
+    public override Vector3 DrawPos => IsTracking ? projectile.DrawPos :
+        (hasLastDrawPos ? lastDrawPos : base.DrawPos);
+
+    public void ResetTrail(Vector3 position)
+    {
+        lastDrawPos = position;
+        hasLastDrawPos = true;
+        this.TryGetComp<Comp_ThingTrail>()?.ResetTrail(position);
+    }
+
+    public void FinishTrail(Vector3 position)
+    {
+        lastDrawPos = position;
+        hasLastDrawPos = true;
+        this.TryGetComp<Comp_ThingTrail>()?.RecordPosition(position);
+        projectile = null;
+    }
 
     public override void SpawnSetup(Map map, bool respawningAfterLoad)
     {
         base.SpawnSetup(map, respawningAfterLoad);
-
         if (!respawningAfterLoad)
-        {
-            Comp_ThingTrail comp = this.TryGetComp<Comp_ThingTrail>();
-            if (comp != null)
-            {
-                this.lifetimeTicksLeft = comp.Props.lifeTimeTicks;
-            }
-        }
+            lifetimeTicksLeft = Mathf.Max(1, this.TryGetComp<Comp_ThingTrail>()?.Props.lifeTimeTicks ?? 1);
     }
 
     protected override void Tick()
     {
+        if (IsTracking)
+        {
+            lastDrawPos = projectile.DrawPos;
+            hasLastDrawPos = true;
+            Position = projectile.Position;
+        }
         base.Tick();
-
-        if (lifetimeTicksLeft <= 0)
-        {
-            this.Destroy();
-            return;
-        }
-
-        if (ProjectileDestroyed)
-        {
-            lifetimeTicksLeft--;
-        }
-
-        //track the projectile
-        if (projectile != null && projectile.Spawned)
-        {
-            this.Position = projectile.Position;
-        }
+        if (IsTracking) return;
+        if (--lifetimeTicksLeft <= 0) Destroy();
     }
 
     public void SetProjectile(Thing projectile)
@@ -72,5 +58,8 @@ internal class ProjectileTracker : ThingWithComps
         base.ExposeData();
         Scribe_References.Look(ref projectile, "projectile");
         Scribe_Values.Look(ref lifetimeTicksLeft, "lifetimeTicksLeft", 0);
+        Scribe_Values.Look(ref lastDrawPos, "trailLastDrawPos");
+        Scribe_Values.Look(ref hasLastDrawPos, "trailHasLastDrawPos", false);
     }
 }
+

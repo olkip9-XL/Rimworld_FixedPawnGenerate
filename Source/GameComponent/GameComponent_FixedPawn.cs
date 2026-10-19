@@ -153,7 +153,7 @@ namespace FixedPawnGenerate
             }
         }
 
-        internal FixedPawnDef GetDef(Pawn pawn)
+        public FixedPawnDef GetDef(Pawn pawn)
         {
             if (pawn == null)
             {
@@ -174,7 +174,7 @@ namespace FixedPawnGenerate
 
             return null;
         }
-        internal Pawn GetPawn(FixedPawnDef def)
+        public Pawn GetPawn(FixedPawnDef def)
         {
             return spawnedPawns.FirstOrDefault(x => x.Value == def).Key;
         }

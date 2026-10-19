@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +24,8 @@ public class CompProperties_ThingTrail : CompProperties
         this.shaderType = modExtension.shaderType;
         this.shaderParameters = modExtension.shaderParameters;
         this.widthCurve = modExtension.widthCurve;
+        this.width = modExtension.width;
+        this.taperByLength = modExtension.taperByLength;
         this.transparencyCurve = modExtension.transparencyCurve;
         this.color = modExtension.color;
         this.altitudeLayer = modExtension.altitudeLayer;
@@ -44,6 +46,10 @@ public class CompProperties_ThingTrail : CompProperties
     public List<ShaderParameter> shaderParameters;
 
     public SimpleCurve widthCurve;
+
+    public float width = 0.6f; // Full width in cells; preserves existing definitions.
+
+    public bool taperByLength = false; // Curve 0=head, 1=tail, even for short trails.
 
     public SimpleCurve transparencyCurve;
 
@@ -76,9 +82,9 @@ public class CompProperties_ThingTrail : CompProperties
             yield return "samplesPerTick must be greater than 0.";
         }
 
-        if (trailTexturePath.NullOrEmpty())
+        if (lifeTimeTicks <= 0)
         {
-            yield return "trailTexturePath must be set.";
+            yield return "lifeTimeTicks must be greater than 0.";
         }
     }
 
@@ -100,3 +106,4 @@ public class CompProperties_ThingTrail : CompProperties
         });
     }
 }
+

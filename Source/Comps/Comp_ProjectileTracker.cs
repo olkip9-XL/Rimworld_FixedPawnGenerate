@@ -1,39 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 
 namespace FixedPawnGenerate;
 
-internal class Comp_ProjectileTracker : ThingComp
+public class Comp_ProjectileTracker : ThingComp
 {
-    public CompProperties_ProjectileTracker Props => (CompProperties_ProjectileTracker)props;
+    private CompProperties_ProjectileTracker Props => (CompProperties_ProjectileTracker)props;
+    private ProjectileTracker tracker;
+
+    public void ResetTrail(Vector3 position)
+    {
+        if (tracker != null && !tracker.Destroyed)
+            tracker.ResetTrail(position);
+    }
 
     public override void PostSpawnSetup(bool respawningAfterLoad)
     {
         base.PostSpawnSetup(respawningAfterLoad);
-
-        if (!respawningAfterLoad)
+        if (respawningAfterLoad) return;
+        if (Props.tracker == null)
         {
-            if (Props.tracker != null)
-            {
-                ProjectileTracker tracker = (ProjectileTracker)ThingMaker.MakeThing(Props.tracker);
-                if (tracker != null)
-                {
-                    tracker.SetProjectile(parent);
-                    GenSpawn.Spawn(tracker, parent.Position, parent.Map);
-                }
-            }
-            else
-            {
-                Log.Error($"Comp_ProjectileTracker on {parent} has no valid tracker set.");
-                return;
-            }
-          
+            Log.Error($"Comp_ProjectileTracker on {parent} has no valid tracker set.");
+            return;
         }
+        tracker = (ProjectileTracker)ThingMaker.MakeThing(Props.tracker);
+        tracker.SetProjectile(parent);
+        GenSpawn.Spawn(tracker, parent.Position, parent.Map);
     }
 
+    public override void PostDeSpawn(Map map, DestroyMode mode = DestroyMode.Vanish)
+    {
+        // Preserve the final segment; the independent tracker continues fading.
+        if (tracker != null && !tracker.Destroyed)
+            tracker.FinishTrail(parent.DrawPos);
+        base.PostDeSpawn(map, mode);
+    }
+
+    public override void PostExposeData()
+    {
+        base.PostExposeData();
+        Scribe_References.Look(ref tracker, "trailTracker");
+    }
 }
