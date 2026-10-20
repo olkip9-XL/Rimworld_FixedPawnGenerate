@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  
+  <ShaderDef>
+    <defName>FPG_TachieComposite</defName>
+    <shaderProgram>
+      <vertexShaderFileName>FPG_TachieComposite.vert.glsl</vertexShaderFileName>
+      <fragmentShaderFileName>FPG_TachieComposite.frag.glsl</fragmentShaderFileName>
+
+      <blendMode>Opaque</blendMode>
+      <depthTest>false</depthTest>
+      <depthWrite>false</depthWrite>
+      <cullMode>None</cullMode>
+      <flipTextureST>false</flipTextureST>
+    </shaderProgram>
+  </ShaderDef>
+  
+</Defs>

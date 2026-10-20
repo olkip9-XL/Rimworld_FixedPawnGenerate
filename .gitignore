@@ -254,3 +254,12 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# 代码备份
+Source - 副本/
+
+# Assets
+*.zip
+*.zip.fingerprint
+*.zip.roles
+*.zip.stamps
